@@ -9,7 +9,7 @@
 	<packaging>jar</packaging>
 
 	<name>usercenter</name>
-	<description>Demo project for Spring Boot</description>
+	<description>Demo project for Spring Could</description>
 
 	<parent>
 		<groupId>org.springframework.boot</groupId>
@@ -52,6 +52,11 @@
 			<groupId>com.zaxxer</groupId>
 			<artifactId>HikariCP</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>org.mybatis.spring.boot</groupId>
+			<artifactId>mybatis-spring-boot-starter</artifactId>
+			<version>1.3.1</version>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -62,6 +67,4 @@
 			</plugin>
 		</plugins>
 	</build>
-
-
 </project>
