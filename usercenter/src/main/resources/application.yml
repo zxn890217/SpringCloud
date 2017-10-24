@@ -27,6 +27,14 @@ spring:
             hibernate.generate_statistics: false
     thymeleaf:
         cache: true
+    cloud:
+        consul:
+            host: localhost
+            port: 8500
+            config:
+                enabled: true
+    application:
+        name: usercenter
 
 mybatis:
     configLocations: classpath:mybatis/mybatis-config.xml
@@ -44,3 +52,6 @@ liquibase:
 
 server:
     port: 8089
+management:
+    security:
+        enabled: false

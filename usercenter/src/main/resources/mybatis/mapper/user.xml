@@ -11,7 +11,7 @@
         <result column="user_name" property="userName"/>
         <result column="sex" property="sex"/>
         <result column="register_time" property="registerTime"/>
-        <collection property="authorityList" column="user_id" ofType="com.example.usercenter.model.Authority" javaType="java.util.ArrayList">
+        <collection property="authorityList" column="user_id" ofType="com.example.usercenter.model.Authority" javaType="java.util.HashSet">
             <id column="authority_id" property="authorityId"/>
             <result column="authority_name" property="authorityName"/>
             <result column="authority_code" property="authorityCode"/>
@@ -53,17 +53,17 @@
         <if test="sort != null">
             order by ${sort} ${order}
         </if>
-        limit #{offset} #{rows}
+        limit #{offset},#{rows}
     </select>
 
-    <select id="count" parameterType="com.example.usercenter.model.QUser" resultType="int">
+    <select id="count" parameterType="com.example.usercenter.model.QUser" resultType="long">
         select count(1) from user u
         <where>
             <include refid="conditions"/>
         </where>
     </select>
 
-    <select id="query">
+    <select id="query" parameterType="com.example.usercenter.model.QUser" resultMap="userMap">
         select u.*,a.* from user u
         left join user_authority au on u.user_id=au.user_id
         left join authority a on au.authority_id=a.authority_id

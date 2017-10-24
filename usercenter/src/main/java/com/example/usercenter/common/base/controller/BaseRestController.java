@@ -11,15 +11,17 @@ import java.util.List;
 /**
  * Created by zxn on 2017/10/23.
  */
-@RestController
 public abstract class BaseRestController<T, Q extends QueryModel> {
 
     protected abstract BaseService<T, Q> getService();
 
     @RequestMapping(value="/{id}", method= RequestMethod.GET)
     @ResponseBody
-    public T get(@PathVariable("id") Long id){
-        return getService().get(id);
+    public RespBody get(@PathVariable("id") Long id){
+        T result = getService().get(id);
+        if(result!=null)
+            return new RespBody(true,"获取成功", result);
+        return new RespBody(false,"获取失败");
     }
     @RequestMapping(value="", method= RequestMethod.POST)
     @ResponseBody
@@ -56,8 +58,11 @@ public abstract class BaseRestController<T, Q extends QueryModel> {
     }
     @RequestMapping(value="", method= RequestMethod.GET)
     @ResponseBody
-    public List<T> query(Q queryModel){
-        return getService().query(queryModel);
+    public RespBody query(Q queryModel){
+        List<T> result = getService().query(queryModel);
+        if(result!=null && result.size()>0)
+            return new RespBody(true,"查询成功", result);
+        return new RespBody(false,"查询结果为空");
     }
     @RequestMapping(value="/page", method= RequestMethod.GET)
     @ResponseBody
