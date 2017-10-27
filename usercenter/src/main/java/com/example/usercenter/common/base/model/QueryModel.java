@@ -12,9 +12,9 @@ public class QueryModel {
     /** 排序方式: desc \ asc */
     protected String order = "";
     /** 获取一页行数 */
-    protected int rows;
+    protected int rows = 20;
     /** 获取的页码 */
-    protected int page;
+    protected int page = 1;
     /** 起始记录 */
     protected int offset;
     protected String[] sortableFields;
