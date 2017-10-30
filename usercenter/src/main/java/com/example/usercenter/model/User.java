@@ -20,6 +20,7 @@ public class User implements Serializable {
     private Long userId;
     @Column(name = "account")
     private String account;
+    @JsonIgnore
     @Column(name = "password")
     private String password;
     @Column(name= "user_type")

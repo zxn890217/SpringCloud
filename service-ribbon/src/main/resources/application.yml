@@ -1,0 +1,11 @@
+eureka:
+    port: ${server.port}
+    client:
+        serviceUrl:
+            defaultZone: http://10.6.71.51:8761/eureka/
+        prefer-same-zone-eureka: false
+server:
+    port: 8091
+spring:
+    application:
+          name: ribbonservice

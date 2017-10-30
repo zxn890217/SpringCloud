@@ -1,3 +1,6 @@
+server:
+    port: 8091
+
 spring:
     devtools:
         restart:
@@ -7,7 +10,7 @@ spring:
     datasource:
         type: com.alibaba.druid.pool.DruidDataSource
         driverClassName: com.mysql.jdbc.Driver
-        url: jdbc:mysql://10.6.71.98:3306/usercenter?useUnicode=true&characterEncoding=utf8&useSSL=false
+        url: jdbc:mysql://10.6.71.98:3306/usercenter?useUnicode=true&characterEncoding=utf8
         username: root
         password: test
         druid:
@@ -45,7 +48,7 @@ eureka:
         prefer-same-zone-eureka: false
     instance:
         prefer-ip-address: true
-        instance-id: ${spring.application.name}:${spring.application.instance_id:${server.port}}
+        #instance-id: ${spring.application.name}:${spring.application.instance_id:${server.port}}
 
 mybatis:
     configLocations: classpath:mybatis/mybatis-config.xml
@@ -56,13 +59,13 @@ liquibase:
     contexts: # runtime contexts to use
     default-schema: # default database schema to use
     drop-first: false
-    enabled: true
+    enabled: false
     url: jdbc:mysql://10.6.71.98:3306/usercenter?useUnicode=true&characterEncoding=utf8&useSSL=false
     user: root
     password: test
 
-server:
-    port: 8091
 management:
     security:
         enabled: false
+
+logging.level.org.springframework.web: DEBUG

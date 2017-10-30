@@ -7,12 +7,21 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="eureka" />
+        <module name="eurekaserver" />
+        <module name="serice-feign" />
+        <module name="service-ribbon" />
+        <module name="service-zuul" />
         <module name="usercenter" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="demo" target="1.8" />
       <module name="eureka" target="1.8" />
+      <module name="eurekaserver" target="1.8" />
+      <module name="ribbonservice" target="1.8" />
+      <module name="serice-feign" target="1.8" />
+      <module name="service-ribbon" target="1.8" />
+      <module name="service-zuul" target="1.8" />
       <module name="usercenter" target="1.8" />
     </bytecodeTargetLevel>
   </component>
