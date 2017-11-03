@@ -1,0 +1,18 @@
+server:
+    port: 8888
+spring:
+    application:
+        name: config-server
+    cloud:
+        config:
+            server:
+                git:
+                    uri: https://github.com/zxn890217/SpringCloud/
+                    searchPaths: respo
+            label: master
+eureka:
+    port: ${server.port}
+    client:
+        serviceUrl:
+            defaultZone: http://10.6.71.51:8761/eureka/
+        prefer-same-zone-eureka: false
