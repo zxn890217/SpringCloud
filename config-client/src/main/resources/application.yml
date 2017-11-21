@@ -1,30 +1,13 @@
 spring:
-    application:
-        name: config-client
     cloud:
-        config:
-            label: master
-            profile: dev
-            #uri: http://localhost:8888/
-            discovery:
-                enabled: true
-                serviceId: config-server
         bus:
             trace:
                   enabled: true
-    rabbitmq:
-        #host: localhost
-        host: 10.6.71.51
-        #username: admin
-        #password: admin
-server:
-    port: 8881
-eureka:
-    port: ${server.port}
-    client:
-        serviceUrl:
-            defaultZone: http://10.6.71.51:8761/eureka/
-        prefer-same-zone-eureka: false
+        stream:
+            kafka:
+                binder:
+                    zk-nodes: 10.6.71.51:2181
+                    brokers: 10.6.71.51:9092
 management:
     security:
         enabled: false

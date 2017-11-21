@@ -1,0 +1,18 @@
+server:
+    port: 8881
+eureka:
+    port: ${server.port}
+    client:
+        serviceUrl:
+            defaultZone: http://10.6.71.51:8761/eureka/
+            prefer-same-zone-eureka: false
+spring:
+    application:
+        name: config-client
+    cloud:
+        config:
+            lable: master
+            profile: dev
+            discovery:
+                enabled: true
+                serviceId: config-server
