@@ -7,6 +7,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
+import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerSecurityConfigurer;
 import org.springframework.security.oauth2.provider.ClientDetailsService;
 import org.springframework.security.oauth2.provider.client.JdbcClientDetailsService;
 import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
@@ -17,26 +18,24 @@ import javax.sql.DataSource;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Created by zxn on 2017/11/20.
+ * Created by zxn on 2017/11/21.
  */
 @Configuration
-public class AuthorizationServerConfigurer extends AuthorizationServerConfigurerAdapter {
+public class OAuthSecurityConfig  extends AuthorizationServerConfigurerAdapter {
     @Autowired
     private AuthenticationManager authenticationManager;
 
     @Autowired
     @SuppressWarnings("SpringJavaAutowiringInspection")
     private DataSource dataSource;
-    @Bean // 声明TokenStore实现
+
+    @Bean
     public TokenStore tokenStore() {
         return new JdbcTokenStore(dataSource);
     }
-    @Bean // 声明 ClientDetails实现
-    public ClientDetailsService clientDetails() {
-        return new JdbcClientDetailsService(dataSource);
-    }
 
-    @Override // 配置框架应用上述实现
+
+    @Override
     public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
         endpoints.authenticationManager(authenticationManager);
         endpoints.tokenStore(tokenStore());
@@ -49,5 +48,29 @@ public class AuthorizationServerConfigurer extends AuthorizationServerConfigurer
         tokenServices.setTokenEnhancer(endpoints.getTokenEnhancer());
         tokenServices.setAccessTokenValiditySeconds( (int) TimeUnit.DAYS.toSeconds(30)); // 30天
         endpoints.tokenServices(tokenServices);
+
+    }
+
+
+    @Override
+    public void configure(AuthorizationServerSecurityConfigurer oauthServer) throws Exception {
+        //oauthServer.checkTokenAccess("isAuthenticated()");
+        oauthServer.checkTokenAccess("permitAll()");
+        oauthServer.allowFormAuthenticationForClients();
+    }
+
+    @Bean
+    public ClientDetailsService clientDetails() {
+        return new JdbcClientDetailsService(dataSource);
+    }
+
+    @Override
+    public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
+        clients.withClientDetails(clientDetails());
+/*        clients.inMemory()
+                .withClient("client")
+                .secret("secret")
+                .authorizedGrantTypes("authorization_code")
+                .scopes("app");*/
     }
 }
