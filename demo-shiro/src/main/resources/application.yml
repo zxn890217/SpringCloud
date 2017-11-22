@@ -1,0 +1,14 @@
+server:
+  port: 8080
+spring:
+  application:
+    name: demo-shiro
+  redis:
+    host: localhost
+    #password: redispassword
+    port: 6379
+    pool:
+      max-idle: 100
+      min-idle: 1
+      max-active: 1000
+      max-wait: -1

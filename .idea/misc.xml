@@ -50,6 +50,7 @@
         <option value="$PROJECT_DIR$/config-server/pom.xml" />
         <option value="$PROJECT_DIR$/config-client/pom.xml" />
         <option value="$PROJECT_DIR$/service-oauth2/pom.xml" />
+        <option value="$PROJECT_DIR$/demo-shiro/pom.xml" />
       </list>
     </option>
   </component>
