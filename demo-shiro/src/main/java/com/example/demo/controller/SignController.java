@@ -21,7 +21,7 @@ public class SignController {
     public User in(){
         UUID uuid = UUID.randomUUID();
         User user = new User(uuid.toString(), "张三", "123456", "男", "15280034363", Arrays.asList(new String[]{"hello-say"}));
-        RedisCache.setObject(user.getToken(), user, 300);
+        RedisCache.setObject(user.getToken(), user, 3000);
         return user;
     }
 
