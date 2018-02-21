@@ -2,70 +2,62 @@ server:
     port: 8091
 
 spring:
-    devtools:
-        restart:
-            enabled: false
-        livereload:
-            enabled: false
-    datasource:
-        type: com.alibaba.druid.pool.DruidDataSource
-        driverClassName: com.mysql.jdbc.Driver
-        url: jdbc:mysql://10.6.71.98:3306/usercenter?useUnicode=true&characterEncoding=utf8
-        username: root
-        password: test
-        druid:
-            minEvictableIdleTimeMillis: 300000
-            testWhileIdle: true
-            testOnBorrow: true
-            testOnReturn: false
-            poolPreparedStatements: true
-            maxPoolPreparedStatementPerConnectionSize: 20
-            filters: stat,wall,log4j
-            connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000
-            useGlobalDataSourceStat: true
-
-    jpa:
-        database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
-        database: MYSQL
-        show-sql: false
-        properties:
-            hibernate.id.new_generator_mappings: true
-            hibernate.cache.use_second_level_cache: false
-            hibernate.cache.use_query_cache: false
-            hibernate.generate_statistics: false
-    thymeleaf:
-        cache: true
-    application:
-        name: usercenter
+  profiles:
+    active: dev
+  devtools:
+    restart:
+      enabled: false
+    livereload:
+      enabled: false
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    driverClassName: com.mysql.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/usercenter?useUnicode=true&characterEncoding=utf8
+    username: root
+    password: test
+    druid:
+      minEvictableIdleTimeMillis: 300000
+      testWhileIdle: true
+      testOnBorrow: true
+      testOnReturn: false
+      poolPreparedStatements: true
+      maxPoolPreparedStatementPerConnectionSize: 20
+      filters: stat,wall,log4j
+      connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000
+      useGlobalDataSourceStat: true
+  thymeleaf:
+    cache: true
+  application:
+    name: usercenter
 
 eureka:
-    port: ${server.port}
-    client:
-        serviceUrl:
-            defaultZone: http://10.6.71.51:8761/eureka/
-        healthcheck:
-            enabled: true
-        prefer-same-zone-eureka: false
-    instance:
-        prefer-ip-address: true
-        #instance-id: ${spring.application.name}:${spring.application.instance_id:${server.port}}
+  port: ${server.port}
+  client:
+    serviceUrl:
+      defaultZone: http://10.6.71.51:8761/eureka/
+    healthcheck:
+      enabled: true
+    prefer-same-zone-eureka: false
+  instance:
+    prefer-ip-address: true
+    #instance-id: ${spring.application.name}:${spring.application.instance_id:${server.port}}
 
 mybatis:
-    configLocations: classpath:mybatis/mybatis-config.xml
-    mapperLocations: classpath:mybatis/mapper/*.xml
+  mapper-locations: classpath:mybatis/mapper/*.xml
+  config-location: classpath:mybatis/config.xml
 
 liquibase:
-    change-log: classpath:/config/liquibase/master.xml
-    contexts: # runtime contexts to use
-    default-schema: # default database schema to use
-    drop-first: false
-    enabled: false
-    url: jdbc:mysql://10.6.71.98:3306/usercenter?useUnicode=true&characterEncoding=utf8&useSSL=false
-    user: root
-    password: test
+  change-log: classpath:/config/liquibase/master.xml
+  contexts: # runtime contexts to use
+  default-schema: # default database schema to use
+  drop-first: false
+  enabled: false
+  url: jdbc:mysql://localhost:3306/usercenter?useUnicode=true&characterEncoding=utf8&useSSL=false
+  user: root
+  password: test
 
 management:
-    security:
-        enabled: false
+  security:
+    enabled: false
 
 logging.level.org.springframework.web: DEBUG

@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.usercenter.dao.ResourceDao">
+    <resultMap type="resource" id="ResourceMap">
+        <id property="id" column="id"/>
+        <result property="type" column="type"/>
+        <result property="content" column="content"/>
+        <result property="enable" column="enable"/>
+    </resultMap>
+
+    <sql id="select-fields">
+    id,type,content,enable
+    </sql>
+
+    <select id="get" parameterType="resource" resultMap="ResourceMap">
+        SELECT <include refid="select-fields"/> FROM resource
+        WHERE id = #{id}
+    </select>
+
+    <insert id="insert" parameterType="resource" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO resource(type,content,enable)
+        VALUES(#{type},#{content},#{enable})
+    </insert>
+
+    <update id="update" parameterType="resource">
+        UPDATE resource
+        <set>
+            type = #{type},
+            content = #{content},
+            enable = #{enable},
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <update id="sensitiveUpdate" parameterType="resource">
+        UPDATE resource
+        <set>
+            <if test="type != null">type = #{type},</if>
+            <if test="content != null">content = #{content},</if>
+            <if test="enable != null">enable = #{enable},</if>
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <delete id="delete" parameterType="resource">
+        DELETE FROM resource
+        WHERE id = #{id}
+    </delete>
+
+    <select id="exists" parameterType="resource" resultType="int">
+        select count(*) from resource
+        <where>
+            <if test="id != null">id = #{id},</if>
+            <if test="type != null">type = #{type},</if>
+            <if test="content != null">content = #{content},</if>
+            <if test="enable != null">enable = #{enable},</if>
+        </where>
+    </select>
+
+    <sql id="select-conditions">
+        <if test="id != null">AND id = #{id}</if>
+        <if test="type != null">AND type = #{type}</if>
+        <if test="content != null">AND content = #{content}</if>
+        <if test="enable != null">AND enable = #{enable}</if>
+    </sql>
+
+    <select id="findByPage" parameterType="qresource" resultMap="ResourceMap">
+        SELECT <include refid="select-fields"/> FROM resource
+        <where>
+            <include refid="select-conditions"/>
+        </where>
+        <if test="sort!= null">
+            order by ${sort} ${order}
+        </if>
+        <if test="limit>0">
+            limit #{offset},#{limit}
+        </if>
+    </select>
+
+    <select id="count" parameterType="qresource" resultType="int">
+        SELECT count(*) FROM resource
+        <where>
+            <include refid="select-conditions"/>
+        </where>
+    </select>
+</mapper>

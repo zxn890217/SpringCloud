@@ -9,6 +9,7 @@
         <module name="config-client" />
         <module name="config-server" />
         <module name="demo-shiro" />
+        <module name="domain" />
         <module name="eureka" />
         <module name="eurekaserver" />
         <module name="serice-feign" />
@@ -23,6 +24,7 @@
       <module name="config-server" target="1.8" />
       <module name="demo" target="1.8" />
       <module name="demo-shiro" target="1.8" />
+      <module name="domain" target="1.6" />
       <module name="eureka" target="1.8" />
       <module name="eurekaserver" target="1.8" />
       <module name="oauth2-server" target="1.8" />

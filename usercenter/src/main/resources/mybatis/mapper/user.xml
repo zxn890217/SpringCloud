@@ -1,77 +1,154 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.usercenter.dao.UserDao">
-    <resultMap type="com.example.usercenter.model.User" id="userMap">
-        <id column="user_id" property="userId"/>
-        <result column="account" property="account"/>
-        <result column="password" property="password"/>
-        <result column="user_type" property="userType"/>
-        <result column="state" property="state"/>
-        <result column="phone_num" property="phoneNum"/>
-        <result column="user_name" property="userName"/>
-        <result column="sex" property="sex"/>
-        <result column="register_time" property="registerTime"/>
-        <collection property="authorityList" column="user_id" ofType="com.example.usercenter.model.Authority" javaType="java.util.HashSet">
-            <id column="authority_id" property="authorityId"/>
-            <result column="authority_name" property="authorityName"/>
-            <result column="authority_code" property="authorityCode"/>
-            <result column="create_time" property="createTime"/>
-        </collection>
+    <resultMap type="user" id="UserMap">
+        <id property="id" column="id"/>
+        <result property="fullName" column="full_name"/>
+        <result property="username" column="username"/>
+        <result property="password" column="password"/>
+        <result property="sex" column="sex"/>
+        <result property="age" column="age"/>
+        <result property="telephone" column="telephone"/>
+        <result property="email" column="email"/>
+        <result property="proviceId" column="provice_id"/>
+        <result property="cityId" column="city_id"/>
+        <result property="regionId" column="region_id"/>
+        <result property="street" column="street"/>
+        <result property="fullAddress" column="full_address"/>
+        <result property="job" column="job"/>
+        <result property="enabled" column="enabled"/>
+        <result property="level" column="level"/>
+        <result property="state" column="state"/>
+        <result property="locked" column="locked"/>
     </resultMap>
 
-    <sql id="conditions">
-        <if test="account != null">
-            and u.account=#{account}
-        </if>
-        <if test="password != null">
-            and u.password=#{password}
-        </if>
-        <if test="userName != null">
-            and u.user_name=#{userName}
-        </if>
-        <if test="sex != null">
-            and u.sex=#{sex}
-        </if>
-        <if test="phoneNum != null">
-            and u.phone_num=#{phoneNum}
-        </if>
-        <if test="userType != null">
-            and u.user_type=#{userType}
-        </if>
-        <if test="state != null">
-            and u.state=#{state}
-        </if>
+    <sql id="select-fields">
+    user_id,full_name,username,password,sex,age,telephone,email,provice_id,city_id,region_id,street,full_address,job,enabled,level,state,locked
     </sql>
 
-    <select id="findByPage" parameterType="com.example.usercenter.model.QUser" resultMap="userMap">
-        select u.*,a.* from user u
-        left join user_authority au on u.user_id=au.user_id
-        left join authority a on au.authority_id=a.authority_id
-        <where>
-            <include refid="conditions"/>
-        </where>
-        <if test="sort != null">
-            order by ${sort} ${order}
-        </if>
-        limit #{offset},#{rows}
+    <select id="get" parameterType="user" resultMap="UserMap">
+        SELECT u.* FROM user u
+        where u.id = #{id}
     </select>
 
-    <select id="count" parameterType="com.example.usercenter.model.QUser" resultType="long">
-        select count(1) from user u
+    <insert id="insert" parameterType="user" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO user(full_name,username,password,sex,age,telephone,email,provice_id,city_id,region_id,street,full_address,job,enabled,level,state,locked)
+        VALUES(#{fullName},#{username},#{password},#{sex},#{age},#{telephone},#{email},#{proviceId},#{cityId},#{regionId},#{street},#{fullAddress},#{job},#{enabled},#{level},#{state},#{locked})
+    </insert>
+
+    <update id="update" parameterType="user">
+        UPDATE user
+        <set>
+            full_name = #{fullName},
+            username = #{username},
+            password = #{password},
+            sex = #{sex},
+            age = #{age},
+            telephone = #{telephone},
+            email = #{email},
+            provice_id = #{proviceId},
+            city_id = #{cityId},
+            region_id = #{regionId},
+            street = #{street},
+            full_address = #{fullAddress},
+            job = #{job},
+            enabled = #{enabled},
+            level = #{level},
+            state = #{state},
+            locked = #{locked},
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <update id="sensitiveUpdate" parameterType="user">
+        UPDATE user
+        <set>
+            <if test="fullName != null">full_name = #{fullName},</if>
+            <if test="username != null">username = #{username},</if>
+            <if test="password != null">password = #{password},</if>
+            <if test="sex != null">sex = #{sex},</if>
+            <if test="age != null">age = #{age},</if>
+            <if test="telephone != null">telephone = #{telephone},</if>
+            <if test="email != null">email = #{email},</if>
+            <if test="proviceId != null">provice_id = #{proviceId},</if>
+            <if test="cityId != null">city_id = #{cityId},</if>
+            <if test="regionId != null">region_id = #{regionId},</if>
+            <if test="street != null">street = #{street},</if>
+            <if test="fullAddress != null">full_address = #{fullAddress},</if>
+            <if test="job != null">job = #{job},</if>
+            <if test="level != null">level = #{level},</if>
+            <if test="state != null">state = #{state},</if>
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <delete id="delete" parameterType="Long">
+        DELETE FROM user WHERE id = #{id}
+    </delete>
+
+    <select id="exists" parameterType="user" resultType="int">
+        select count(*) from user
         <where>
-            <include refid="conditions"/>
+            <if test="id != null">id = #{id},</if>
+            <if test="fullName != null">full_name = #{fullName},</if>
+            <if test="username != null">username = #{username},</if>
+            <if test="password != null">password = #{password},</if>
+            <if test="sex != null">sex = #{sex},</if>
+            <if test="age != null">age = #{age},</if>
+            <if test="telephone != null">telephone = #{telephone},</if>
+            <if test="email != null">email = #{email},</if>
+            <if test="proviceId != null">provice_id = #{proviceId},</if>
+            <if test="cityId != null">city_id = #{cityId},</if>
+            <if test="regionId != null">region_id = #{regionId},</if>
+            <if test="street != null">street = #{street},</if>
+            <if test="fullAddress != null">full_address = #{fullAddress},</if>
+            <if test="job != null">job = #{job},</if>
+            <if test="enabled != null">enabled = #{enabled},</if>
+            <if test="level != null">level = #{level},</if>
+            <if test="state != null">state = #{state},</if>
+            <if test="locked != null">locked = #{locked},</if>
         </where>
     </select>
 
-    <select id="query" parameterType="com.example.usercenter.model.QUser" resultMap="userMap">
-        select u.*,a.* from user u
-        left join user_authority au on u.user_id=au.user_id
-        left join authority a on au.authority_id=a.authority_id
+    <sql id="select-conditions">
+        <if test="id != null">AND id = #{id},</if>
+        <if test="fullName != null">AND u.full_name = #{fullName}</if>
+        <if test="username != null">AND u.username = #{username}</if>
+        <if test="password != null">AND u.password = #{password}</if>
+        <if test="sex != null">AND u.sex = #{sex}</if>
+        <if test="age != null">AND u.age = #{age}</if>
+        <if test="telephone != null">AND u.telephone = #{telephone}</if>
+        <if test="email != null">AND u.email = #{email}</if>
+        <if test="proviceId != null">AND u.provice_id = #{proviceId}</if>
+        <if test="cityId != null">AND u.city_id = #{cityId}</if>
+        <if test="regionId != null">AND u.region_id = #{regionId}</if>
+        <if test="street != null">AND u.street = #{street}</if>
+        <if test="fullAddress != null">AND u.full_address = #{fullAddress}</if>
+        <if test="job != null">AND u.job = #{job}</if>
+        <if test="enabled != null">AND u.enabled = #{enabled}</if>
+        <if test="level != null">AND u.level = #{level}</if>
+        <if test="state != null">AND u.state = #{state}</if>
+        <if test="locked != null">locked = #{locked},</if>
+    </sql>
+
+    <select id="findByPage" parameterType="quser" resultMap="UserMap">
+        SELECT u.*  FROM user u
         <where>
-            <include refid="conditions"/>
+            <include refid="select-conditions"/>
         </where>
-        <if test="sort != null">
-            order by ${sort} ${order}
+        <if test="sort!= null">
+            order by u.${sort} ${order}
+        </if>
+        <if test="limit>0">
+            limit #{offset},#{limit}
         </if>
     </select>
+
+    <select id="count" parameterType="quser" resultType="int">
+        SELECT count(*) FROM user u
+        <where>
+            <include refid="select-conditions"/>
+        </where>
+    </select>
+
 </mapper>

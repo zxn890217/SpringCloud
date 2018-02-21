@@ -31,10 +31,10 @@ public class SwaggerConfig {
             @Override
             public boolean apply(RequestHandler input) {
                 // 除非是在开发环境中否则不开启swagger2
-                /*String active = env.getProperty("spring.profiles.active");
+                String active = env.getProperty("spring.profiles.active");
                 if(!active.equalsIgnoreCase("dev")){
                     return false;
-                }*/
+                }
                 Class<?> declaringClass = input.declaringClass();
                 if (declaringClass == BasicErrorController.class)// 排除
                     return false;
