@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.usercenter.dao.RoleDao">
+    <resultMap type="role" id="RoleMap">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <collection property="authorities" ofType="authority" javaType="java.util.ArrayList">
+            <id property="id" column="authority_id"/>
+            <result property="name" column="authority_name"/>
+            <collection property="resources" ofType="resource" javaType="java.util.ArrayList">
+                <id property="id" column="resource_id"/>
+                <result property="type" column="type"/>
+                <result property="content" column="content"/>
+                <result property="enable" column="enable"/>
+            </collection>
+        </collection>
+    </resultMap>
+
+    <sql id="select-fields">
+    id,name
+    </sql>
+
+    <select id="get" parameterType="role" resultMap="RoleMap">
+        SELECT r.*,a.id authority_id, a.name authority_name,rc.id resource_id,rc.type,rc.content,rc.enable FROM role r
+        LEFT JOIN role_authority ra on r.id=ra.role_id
+        LEFT JOIN authority a on ra.authority_id=a.id
+        LEFT JOIN authority_resource ar on ar.authority_id=ar.authority_id
+        LEFT JOIN resource rc on ar.resource_id=rc.id
+        WHERE r.id = #{id}
+    </select>
+
+    <insert id="insert" parameterType="role" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO role(name)
+        VALUES(#{name})
+    </insert>
+
+    <insert id="saveRoleAuthority" parameterType="role">
+        INSERT INTO role_authority(role_id,authority_id)
+        VALUES
+        <foreach collection="authorities" item="item" index="index" separator=",">
+            (#{id},#{item.id})
+        </foreach>
+    </insert>
+
+    <update id="update" parameterType="role">
+        UPDATE role
+        <set>
+            name = #{name},
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <update id="sensitiveUpdate" parameterType="role">
+        UPDATE role
+        <set>
+            <if test="name != null">name = #{name},</if>
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <delete id="delete" parameterType="role">
+        DELETE FROM role
+        WHERE id = #{id}
+    </delete>
+
+    <delete id="deleteRoleAuthority" parameterType="long">
+        DELETE FROM role_authority
+        WHERE role_id = #{id}
+    </delete>
+
+    <select id="exists" parameterType="role" resultType="int">
+        select count(*) from role
+        <where>
+            <if test="name != null">name = #{name},</if>
+        </where>
+    </select>
+
+    <sql id="select-conditions">
+        <if test="id != null">AND r.id = #{id}</if>
+        <if test="name != null">AND r.name = #{name}</if>
+    </sql>
+
+    <select id="findByPage" parameterType="qrole" resultMap="RoleMap">
+        SELECT r.*,a.id authority_id, a.name authority_name FROM role r
+        LEFT JOIN role_authority ra on r.id=ra.role_id
+        LEFT JOIN authority a on ra.authority_id=a.id
+        <where>
+            <include refid="select-conditions"/>
+        </where>
+        <if test="sort!= null">
+            order by r.${sort} ${order}
+        </if>
+        <if test="limit>0">
+            limit #{offset},#{limit}
+        </if>
+    </select>
+
+    <select id="count" parameterType="qrole" resultType="int">
+        SELECT count(*) FROM role a
+        <where>
+            <include refid="select-conditions"/>
+        </where>
+    </select>
+</mapper>

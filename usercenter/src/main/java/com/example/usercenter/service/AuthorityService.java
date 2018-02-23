@@ -19,4 +19,33 @@ public class AuthorityService extends BaseService<Authority, QAuthority> {
     protected BaseDao<Authority, QAuthority> getDao() {
         return authorityDao;
     }
+
+    @Override
+    public boolean insert(Authority entity) {
+        if(authorityDao.insert(entity)>0){
+            if(entity.getRecources()!=null && entity.getRecources().size()>0)
+                authorityDao.saveAuthorityResource(entity);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean update(Authority entity) {
+        authorityDao.deleteAuthorityResource(entity.getId());
+        if(entity.getRecources()!=null && entity.getRecources().size()>0)
+            authorityDao.saveAuthorityResource(entity);
+        return super.update(entity);
+    }
+
+    @Override
+    public boolean sensitiveUpdate(Authority entity) {
+        return super.sensitiveUpdate(entity);
+    }
+
+    @Override
+    public boolean delete(Long id) {
+        authorityDao.deleteAuthorityResource(id);
+        return super.delete(id);
+    }
 }

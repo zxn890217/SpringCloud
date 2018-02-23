@@ -49,9 +49,7 @@ public class User {
     private boolean locked;
     //角色
     private List<Role> roles;
-    //菜单
-    @JsonIgnore
-    private Set<Authority> authorities;
+
 
     public Long getId() {
         return id;
@@ -203,13 +201,5 @@ public class User {
 
     public void setRoles(List<Role> roles) {
         this.roles = roles;
-    }
-
-    public Set<Authority> getAuthorities() {
-        return authorities;
-    }
-
-    public void setAuthorities(Set<Authority> authorities) {
-        this.authorities = authorities;
     }
 }
