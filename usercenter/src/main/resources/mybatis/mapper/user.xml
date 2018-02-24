@@ -42,6 +42,14 @@
         VALUES(#{fullName},#{username},#{password},#{sex},#{age},#{telephone},#{email},#{proviceId},#{cityId},#{regionId},#{street},#{fullAddress},#{job},#{enabled},#{level},#{state},#{locked})
     </insert>
 
+    <insert id="saveUserRole" parameterType="user">
+        INSERT INTO user_role(user_id,role_id)
+        VALUES
+        <foreach collection="roles" item="item" index="index" separator=",">
+            (#{id},#{item.id})
+        </foreach>
+    </insert>
+
     <update id="update" parameterType="user">
         UPDATE user
         <set>
@@ -92,9 +100,17 @@
         DELETE FROM user WHERE id = #{id}
     </delete>
 
+    <delete id="deleteUserRole" parameterType="long">
+        DELETE FROM user_role WHERE user_id = #{id}
+    </delete>
+
     <select id="exists" parameterType="user" resultType="int">
         SELECT count(*) FROM user
-        WHERE username = #{username}
+        <where>
+            <if test="username != null">AND username = #{username}</if>
+            <if test="telephone != null">AND telephone = #{telephone}</if>
+            <if test="email != null">AND email = #{email}</if>
+        </where>
     </select>
 
     <sql id="select-conditions">

@@ -7,7 +7,6 @@ import java.util.List;
 /**
  * Created by zxn on 2017/10/23.
  */
-@RestController
 public abstract class BaseRestController<T, Q extends QueryBase> {
 
     protected abstract BaseService<T, Q> getService();
@@ -24,34 +23,37 @@ public abstract class BaseRestController<T, Q extends QueryBase> {
     @ResponseBody
     public RespBody save(@RequestBody T entity){
         try {
-            getService().insert(entity);
-            return new RespBody(true, "保存成功");
+            if(getService().insert(entity))
+                return new RespBody(true, "保存成功");
         }
         catch (Exception e){
-            return new RespBody(false, "保存失败");
+            e.printStackTrace();
         }
+        return new RespBody(false, "保存失败");
     }
     @PutMapping(value="/{id}")
     @ResponseBody
     public RespBody update(@PathVariable("id") Long id, @RequestBody T entity){
         try{
-            getService().update(entity);
-            return new RespBody(true, "修改成功");
+            if(getService().update(entity))
+                return new RespBody(true, "修改成功");
         }
         catch (Exception e){
-            return new RespBody(false, "修改失败");
+            e.printStackTrace();
         }
+        return new RespBody(false, "修改失败");
     }
     @DeleteMapping(value="/{id}")
     @ResponseBody
     public RespBody delete(@PathVariable("id") Long id){
         try{
-            getService().delete(id);
-            return new RespBody(true, "删除成功");
+            if(getService().delete(id))
+                return new RespBody(true, "删除成功");
         }
         catch (Exception e){
-            return new RespBody(false, "删除失败");
+            e.printStackTrace();
         }
+        return new RespBody(false, "删除失败");
     }
     @GetMapping(value="")
     @ResponseBody

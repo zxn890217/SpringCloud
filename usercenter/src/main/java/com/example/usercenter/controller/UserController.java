@@ -12,7 +12,8 @@ import org.springframework.web.bind.annotation.RestController;
 /**
  * Created by zxn on 2017/10/23.
  */
-@RequestMapping(value="/user")
+@RestController
+@RequestMapping(value = "/user")
 public class UserController extends BaseRestController<User, QUser> {
     @Autowired
     private UserService userService;

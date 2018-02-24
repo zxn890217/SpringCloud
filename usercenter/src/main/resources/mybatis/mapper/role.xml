@@ -64,8 +64,7 @@
     </delete>
 
     <delete id="deleteRoleAuthority" parameterType="long">
-        DELETE FROM role_authority
-        WHERE role_id = #{id}
+        DELETE FROM role_authority WHERE role_id = #{id}
     </delete>
 
     <select id="exists" parameterType="role" resultType="int">

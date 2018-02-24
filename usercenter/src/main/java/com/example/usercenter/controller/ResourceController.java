@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
  * Created by ZXN on 2018/2/21.
  */
 @RestController
-@RequestMapping(value="/resource")
+@RequestMapping(value = "/resource")
 public class ResourceController extends BaseRestController<Resource, QResource> {
     @Autowired
     private ResourceService resourceService;
