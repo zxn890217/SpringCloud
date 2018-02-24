@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.frame.dao.MenuDao">
+    <resultMap type="menu" id="MenuMap">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="type" column="type"/>
+        <result property="fromType" column="from_type"/>
+        <result property="seq" column="seq"/>
+        <result property="pid" column="pid"/>
+        <result property="iconClass" column="icon_class"/>
+        <result property="state" column="state"/>
+        <result property="visable" column="visable"/>
+        <association property="resource" javaType="resource">
+            <id property="id" column="resource_id"/>
+            <result property="type" column="type"/>
+            <result property="content" column="content"/>
+            <result property="enable" column="enable"/>
+        </association>
+    </resultMap>
+
+    <resultMap type="menu" id="MenuTreeMap">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="type" column="type"/>
+        <result property="fromType" column="from_type"/>
+        <result property="seq" column="seq"/>
+        <result property="pid" column="pid"/>
+        <result property="iconClass" column="icon_class"/>
+        <result property="state" column="state"/>
+        <result property="visable" column="visable"/>
+        <collection property="children" ofType="menu" javaType="java.util.ArrayList">
+            <id property="id" column="c_id"/>
+            <result property="name" column="c_name"/>
+            <result property="type" column="c_type"/>
+            <result property="fromType" column="c_from_type"/>
+            <result property="resource_id" column="c_resource_id"/>
+            <result property="seq" column="c_seq"/>
+            <result property="pid" column="c_pid"/>
+            <result property="iconClass" column="c_icon_class"/>
+            <result property="state" column="c_state"/>
+            <result property="visable" column="c_visable"/>
+            <association property="resource" javaType="resource">
+                <id property="id" column="resource_id"/>
+                <result property="type" column="resource_type"/>
+                <result property="content" column="content"/>
+                <result property="enable" column="enable"/>
+            </association>
+        </collection>
+    </resultMap>
+
+    <sql id="select-fields">
+    id,name,type,resource_id,seq,pid,icon_class,state,visable
+    </sql>
+
+    <select id="get" parameterType="menu" resultMap="MenuMap">
+        SELECT m.*,r.type resource_type,r.content,r.enable FROM menu m 
+        LEFT JOIN resource r on m.resource_id=r.id
+        where m.id = #{id}
+    </select>
+
+    <select id="getMenuTree" parameterType="qmenu" resultMap="MenuTreeMap">
+        SELECT p.*,c.id c_id,c.name c_name,c.type c_type,c.from_type c_from_type,c.resource_id c_resource_id,c.seq c_seq,c.pid c_pid,c.icon_class c_icon_class,c.state c_state,c.visable c_visable,
+        r.type resource_type,r.content,r.enable
+        FROM menu c
+        INNER JOIN menu p on c.pid=p.id
+        INNER JOIN resource r on c.resource_id=r.id and r.type!=3
+        INNER JOIN authority_resource ar on ar.resource_id=r.id
+        INNER JOIN role_authority rr on rr.authority_id=ar.authority_id
+        INNER JOIN user_role ur on rr.role_id=ur.role_id
+        WHERE c.state='1' and c.visable='1'
+        AND ur.user_id=#{userId}
+        <if test="fromType != null">
+        AND c.from_type=#{fromType}
+        </if>
+        UNION
+        SELECT p.*,c.id c_id,c.name c_name,c.type c_type,c.from_type c_from_type,c.resource_id c_resource_id,c.seq c_seq,c.pid c_pid,c.icon_class c_icon_class,c.state c_state,c.visable c_visable,
+        r.type resource_type,r.content,r.enable
+        FROM menu c
+        INNER JOIN menu p on c.pid=p.id
+        INNER JOIN resource r on c.resource_id=r.id and r.type=3
+    </select>
+
+    <insert id="insert" parameterType="menu" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO menu(name,type,from_type,resource_id,seq,pid,icon_class,state,visable)
+        VALUES(#{name},#{type},#{fromType},#{resourceId},#{seq},#{pid},#{iconClass},#{state},#{visable})
+    </insert>
+
+    <update id="update" parameterType="menu">
+        UPDATE menu
+        <set>
+            name = #{name},
+            type = #{type},
+            from_type = #{fromType},
+            resource_id = #{resourceId},
+            seq = #{seq},
+            pid = #{pid},
+            icon_class = #{iconClass},
+            state = #{state},
+            visable = #{visable},
+        </set>
+        where id = #{id}
+    </update>
+
+    <update id="sensitiveUpdate" parameterType="menu">
+        UPDATE menu
+        <set>
+            <if test="name != null">name = #{name},</if>
+            <if test="type != null">type = #{type},</if>
+            <if test="fromType != null">from_type = #{fromType},</if>
+            <if test="resourceId != null">resource_id = #{resourceId},</if>
+            <if test="seq != null">seq = #{seq},</if>
+            <if test="pid != null">pid = #{pid},</if>
+            <if test="iconClass != null">icon_class = #{iconClass},</if>
+            <if test="state != null">state = #{state},</if>
+            <if test="visable != null">visable = #{visable},</if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <delete id="delete" parameterType="menu">
+        DELETE FROM menu
+        <where>
+             AND id = #{id}
+        </where>
+    </delete>
+
+    <update id="clearPid" parameterType="int">
+        UPDATE menu set pid=null, type='1' where pid=#{pid}
+    </update>
+
+    <select id="exists" parameterType="menu" resultType="int">
+        select count(*) from menu where name = #{name}
+    </select>
+
+    <sql id="select-conditions">
+        <if test="id != null">AND id = #{id}</if>
+        <if test="name != null">AND name like concat('%',#{name},'%')</if>
+        <if test="type != null">AND type = #{type}</if>
+        <if test="resourceId != null">AND resource_id = #{resourceId}</if>
+        <if test="seq != null">AND seq = #{seq}</if>
+        <if test="pid != null">AND pid = #{pid}</if>
+        <if test="iconClass != null">AND icon_class = #{iconClass}</if>
+        <if test="state != null">AND state = #{state}</if>
+        <if test="visable != null">AND visable = #{visable},</if>
+    </sql>
+
+    <select id="findByPage" parameterType="qmenu" resultMap="MenuMap">
+        SELECT <include refid="select-fields"/> FROM menu
+        <where>
+            <include refid="select-conditions"/>
+        </where>
+        <if test="sort!= null">
+            order by ${sort} ${order}
+        </if>
+        <if test="limit>0">
+            limit #{offset},#{limit}
+        </if>
+    </select>
+
+    <select id="count" parameterType="qmenu" resultType="int">
+        SELECT count(*) FROM menu
+        <where>
+            <include refid="select-conditions"/>
+        </where>
+    </select>
+</mapper>
