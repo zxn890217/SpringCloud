@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<link rel="stylesheet" href="/plugins/select2/css/select2.css">
+<script src="/plugins/address/address_data.js"></script>
+<script src="/plugins/address/addressUtil.js"></script>
+<script src="/plugins/select2/js/select2.min.js"></script>
+<script>
+    $(function(){
+        utils.bootstrapTable({
+            id: "user-table",
+            url: "/user/list",
+            singleSelect: true,
+            pagination: true,
+            searchForm: 'user-searchForm',
+            columns: [
+                {field:'check', checkbox:true},
+                {field:'userId', title:'用户ID', visible:false},
+                {field:'fullName', title:'姓名'},
+                {field:'username', title:'帐号'},
+                {field:'sex', title:'性别'},
+                {field:'age', title:'年龄'},
+                {field:'telephone', title:'手机号'},
+                {field:'email', title:'邮箱'},
+                {field:'fullAddress', title:'地址'},
+                {field:'job', title:'职位'},
+                {field:'enabled', title:'启/禁用', formatter:function(value){
+                    if(value)
+                        return '启用';
+                    return '禁用';
+                }},
+                {field:'locked', title:'锁定', formatter:function(value){
+                    if(value)
+                        return '是';
+                    return '否';
+                }},
+                {field:'level', title:'等级'},
+                {field:'state', title:'状态', formatter: function(value){
+                    switch (value){
+                        case 0: return '离职';
+                        case 1: return '在职';
+                        case 2: return '请假';
+                        case 3: return '调休';
+                        case 4: return '年假';
+                        case 5: return '病假';
+                    }
+                }},
+                {field:'roles', title:'角色', formatter: function(value){
+                    if(value){
+                        var str = '';
+                        $.each(value, function(i, n){
+                            str += n.name +' ';
+                        });
+                        return str;
+                    }
+                }}
+            ],
+            buttons: [
+                {text:"添加", iconCls:"glyphicon glyphicon-plus",
+                    handler:function(){
+                        utils.dialog({
+                            id: "user-dialog",
+                            title: "添加",
+                            url: "/pages/user/add.html",
+                            buttons: [{label: "保存", id: "user-saveBtn"}]
+                        });
+                    }},
+                {text:"修改", iconCls:"glyphicon glyphicon-pencil",
+                    handler:function(){
+                        var rows = $("#user-table").bootstrapTable("getSelections");
+                        if(rows.length!=1){
+                            Lobibox.alert('info', {title: "提示", msg: "请选定一行数据"});
+                        }
+                        else{
+                            utils.dialog({
+                                id: "user-dialog",
+                                title: "修改",
+                                url: "/pages/user/update.html",
+                                buttons: [{label: "修改", id: "user-editBtn"}],
+                                data: rows[0]
+                            });
+                        }
+                    }},
+                {text:"删除", iconCls:"glyphicon glyphicon-remove",
+                    handler:function(){
+                        var rows = $("#user-table").bootstrapTable('getSelections');
+                        if(rows.length==0){
+                            Lobibox.alert('info', {title: "提示", msg: "请先选中要删除的记录"});
+                        }
+                        else{
+                            utils.deleteAjax({
+                                url: "/user/delete",
+                                data: {userId:rows[0].userId},
+                                tableId: "user-table"
+                            });
+                        }
+                    }},
+                {text:"重置密码", iconCls:"glyphicon glyphicon-lock",
+                    handler:function(){
+                        var rows = $("#user-table").bootstrapTable('getSelections');
+                        if(rows.length==0){
+                            Lobibox.alert('info', {title: "提示", msg: "请先选中要重置密码的用户"});
+                        }
+                        else{
+                            utils.dialog({
+                                id: "user-dialog",
+                                title: "重置密码",
+                                url: "/pages/user/reset_password.html",
+                                buttons: [{label: "重置", id: "user-resetBtn"}],
+                                data: rows[0]
+                            });
+                        }
+                    }},
+                {text:"详情", iconCls:"glyphicon glyphicon-file",
+                    handler:function(){
+                        var rows = $("#user-table").bootstrapTable('getSelections');
+                        if(rows.length==0){
+                            Lobibox.alert('info', {title: "提示", msg: "请先选中要查看的记录"});
+                        }
+                        else{
+                            utils.dialog({
+                                id: "user-dialog",
+                                title: "详情",
+                                url: "/pages/user/detail.html",
+                                data: rows[0]
+                            });
+                        }
+                    }}
+            ]});
+    });
+</script>
+<div class="panel panel-default">
+    <div class="panel-body">
+        <form id="user-searchForm" class="searchform">
+            <div><input class="form-control" type="text" name="fullName" placeholder="姓名" maxlength="32"/></div>
+            <div><input class="form-control" type="text" name="username" placeholder="帐号" maxlength="20"/></div>
+            <div><input class="form-control" type="text" name="telephone" placeholder="手机号" maxlength="11"/></div>
+            <div><input class="form-control" type="text" name="email" placeholder="邮箱" maxlength="32"/></div>
+            <div><input class="form-control" type="text" name="job" placeholder="职位" maxlength="50"/></div>
+            <div>
+                <select class="form-control" name="enabled" placeholder="启/禁用">
+                    <option value="">--启/禁用--</option>
+                    <option value="true">启用</option>
+                    <option value="false">禁用</option>
+                </select>
+            </div>
+            <div>
+                <select class="form-control" name="state" placeholder="状态">
+                    <option value="">--状态--</option>
+                    <option value="0">离职</option>
+                    <option value="1">在职</option>
+                    <option value="2">请假</option>
+                    <option value="3">调休</option>
+                    <option value="4">年假</option>
+                    <option value="5">病假</option>
+                </select>
+            </div>
+        </form>
+    </div>
+</div>
+<table id="user-table"></table>

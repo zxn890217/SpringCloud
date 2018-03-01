@@ -1,0 +1,14 @@
+#main_header{height:70;background:#024883;}
+#main_header .title{height:50px;font-size:30;font-family:叶根友毛笔行书2.0版;color:blue;vertical-align:middle;}
+#main_header .info{height:30px;width:450px;height:20px;position:absolute;bottom:1px;right:10px;text-align:right;}
+
+#menu_nav ul li a{ color:Black; text-decoration:none;}
+#menu_nav ul li a:hover{ color:Red; text-decoration:none;}
+
+#menu_nav ul{list-style-type:none;margin:0px; padding:5px;}
+#menu_nav ul li{ padding:0px;}
+#menu_nav ul li div{margin:2px 0px;padding:5px;text-align:center;}
+
+.userinfo-div{
+	position:fixed; right:0; top:0; width:480px; height:30px; z-index:1000;
+}

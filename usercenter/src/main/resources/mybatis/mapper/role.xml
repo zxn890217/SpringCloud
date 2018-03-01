@@ -7,6 +7,7 @@
         <collection property="authorities" ofType="authority" javaType="java.util.ArrayList">
             <id property="id" column="authority_id"/>
             <result property="name" column="authority_name"/>
+            <result property="code" column="authority_code"/>
             <collection property="resources" ofType="resource" javaType="java.util.ArrayList">
                 <id property="id" column="resource_id"/>
                 <result property="type" column="type"/>
@@ -21,7 +22,7 @@
     </sql>
 
     <select id="get" parameterType="role" resultMap="RoleMap">
-        SELECT r.*,a.id authority_id, a.name authority_name,rc.id resource_id,rc.type,rc.content,rc.enable FROM role r
+        SELECT r.*, a.id authority_id, a.name authority_name, a.code authority_code, rc.id resource_id, rc.type, rc.content, rc.enable FROM role r
         LEFT JOIN role_authority ra on r.id=ra.role_id
         LEFT JOIN authority a on ra.authority_id=a.id
         LEFT JOIN authority_resource ar on ar.authority_id=ar.authority_id
@@ -79,8 +80,8 @@
         <if test="name != null">AND r.name = #{name}</if>
     </sql>
 
-    <select id="findByPage" parameterType="qrole" resultMap="RoleMap">
-        SELECT r.*,a.id authority_id, a.name authority_name FROM role r
+    <select id="query" parameterType="qrole" resultMap="RoleMap">
+        SELECT r.*,a.id authority_id, a.name authority_name, a.code authority_code FROM role r
         LEFT JOIN role_authority ra on r.id=ra.role_id
         LEFT JOIN authority a on ra.authority_id=a.id
         <where>

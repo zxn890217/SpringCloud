@@ -23,7 +23,7 @@ public class AuthorityService extends BaseService<Authority, QAuthority> {
     @Override
     public boolean insert(Authority entity) {
         if(authorityDao.insert(entity)>0){
-            if(entity.getRecources()!=null && entity.getRecources().size()>0)
+            if(entity.getResources()!=null && entity.getResources().size()>0)
                 authorityDao.saveAuthorityResource(entity);
             return true;
         }
@@ -33,7 +33,7 @@ public class AuthorityService extends BaseService<Authority, QAuthority> {
     @Override
     public boolean update(Authority entity) {
         authorityDao.deleteAuthorityResource(entity.getId());
-        if(entity.getRecources()!=null && entity.getRecources().size()>0)
+        if(entity.getResources()!=null && entity.getResources().size()>0)
             authorityDao.saveAuthorityResource(entity);
         return super.update(entity);
     }

@@ -1,0 +1,41 @@
+<link href="/plugins/jquery-treegrid/css/jquery.treegrid.css" rel="stylesheet" />
+<script src="/plugins/jquery-treegrid/js/jquery.treegrid.min.js"></script>
+<script src="/plugins/jquery-treegrid/js/jquery.treegrid.bootstrap3.js"></script>
+<script src="/plugins/jquery-treegrid/js/jquery.treegrid.extension.js"></script>
+<script>
+    $(function(){
+        $('#menu-tree-table').treegridData({
+            treeColumn:1,
+            initialState:'expanded',//expanded
+            singleSelect:true,
+            id: 'id',
+            parentColumn: 'parent.id',
+            type: "GET",
+            url: "/menu/query",
+            ajaxParams: {}, //请求数据的ajax的data属性
+            expandColumn: null,//在哪一列上面显示展开按钮
+            striped: true,   //是否各行渐变色
+            bordered: true,  //是否显示边框
+            expandAll: true,  //是否全部展开
+            columns: [
+                {field:'id', title:'主键', checkbox:true},
+                {field:'name', title:'名称'}
+            ],
+            buttons: [
+                {text:"选择", iconCls:"glyphicon glyphicon-plus",
+                    handler:function(){
+                        var rows = $("#menu-tree-table").treegridData("getSelections");
+                        if(rows.length!=1){
+                            Lobibox.alert('info', {title: "提示", msg: "请选定一行数据"});
+                        }
+                        else{
+                            var dialog = BootstrapDialog.getDialog("menu-tree-dialog");
+                            dialog.options.data.callback(rows[0]);
+                            dialog.close();
+                        }
+
+                    }}
+            ]});
+    });
+</script>
+<table id="menu-tree-table"></table>

@@ -20,4 +20,8 @@ public class UserService extends BaseService<User, QUser> {
     protected BaseDao<User, QUser> getDao() {
         return userDao;
     }
+
+    public User loadUser(String username, String password){
+        return userDao.loadUser(username, password);
+    }
 }

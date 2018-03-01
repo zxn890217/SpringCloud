@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<script>
+$(function(){
+utils.bootstrapTable({
+    id: "role-table",
+    url: "/role/list",
+    singleSelect: true,
+    pagination: true,
+    searchForm: 'role-searchForm',
+    columns: [
+        {field:'check', checkbox:true},
+        {field:'roleId', title:'角色ID', visible:false}, 
+        {field:'name', title:'角色名称'},
+        {field:'state', title:'状态', formatter:function(value){
+            if(value=='1')
+                return '可用';
+            return '禁用';
+        }},
+        {field:'menus', title:'拥有菜单', formatter:function(value){
+            if(value){
+                var str = '';
+                $.each(value, function(i, n){
+                    str += n.name +' ';
+                });
+                return str;
+            }
+        }}
+    ],
+    buttons: [
+        {text:"添加", iconCls:"glyphicon glyphicon-plus",
+            handler:function(){
+                utils.dialog({
+                    id: "role-dialog",
+                    title: "添加",
+                    url: "/pages/role/add.html",
+                    buttons: [{label: "保存", id: "role-saveBtn"}]
+                });
+            }},
+        {text:"修改", iconCls:"glyphicon glyphicon-pencil",
+            handler:function(){
+                var rows = $("#role-table").bootstrapTable("getSelections");
+                if(rows.length!=1){
+                    Lobibox.alert('info', {title: "提示", msg: "请选定一行数据"});
+                }
+                else{
+                    utils.dialog({
+                        id: "role-dialog",
+                        title: "修改",
+                        url: "/pages/role/update.html",
+                        buttons: [{label: "修改", id: "role-editBtn"}],
+                        data: {roleId: rows[0].roleId}
+                    });
+                }
+            }},
+        {text:"删除", iconCls:"glyphicon glyphicon-remove",
+            handler:function(){
+                var rows = $("#role-table").bootstrapTable('getSelections');
+                if(rows.length==0){
+                    Lobibox.alert('info', {title: "提示", msg: "请先选中要删除的记录"});
+                }
+                else{
+                    utils.deleteAjax({
+                        url: "/role/delete",
+                        data: {roleId:rows[0].roleId},
+                        tableId: "role-table"
+                    });
+                }
+            }},
+        {text:"详情", iconCls:"glyphicon glyphicon-file",
+            handler:function(){
+                var rows = $("#role-table").bootstrapTable('getSelections');
+                if(rows.length==0){
+                    Lobibox.alert('info', {title: "提示", msg: "请先选中要查看的记录"});
+                }
+                else{
+                    utils.dialog({
+                        id: "role-dialog",
+                        title: "详情",
+                        url: "/pages/role/detail.html",
+                        data: {roleId: rows[0].roleId}
+                    });
+                }
+            }}
+    ]});
+});
+</script>
+<div class="panel panel-default">
+    <div class="panel-body">
+        <form id="role-searchForm" class="searchform">
+            <div><input class="form-control" type="text" name="name" placeholder="角色名称"/></div>
+        </form>
+    </div>
+</div>
+<table id="role-table"></table>

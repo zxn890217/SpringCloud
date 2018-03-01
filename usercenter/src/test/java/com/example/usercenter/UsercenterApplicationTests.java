@@ -11,6 +11,9 @@ public class UsercenterApplicationTests {
 
 	@Test
 	public void contextLoads() {
+		String path = "/1/2/3/";
+		String[] paths = path.split("/");
+		System.out.print(paths);
 	}
 
 }

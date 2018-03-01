@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<script>
+    $(function(){
+        utils.ajax({
+            url:"/role/query",
+            async: false,
+            success:function(r){
+                if(r && r.length>0){
+                    var select = $("#user-form select[name='roleIds']");
+                    $.each(r, function(i, n){
+                        select.append('<option value="'+n.roleId+'">'+n.name+'</option>');
+                    });
+                    select.select2();
+                    select.on('select2:selecting', function (evt) {
+                        if(evt.params.args.data.id)
+                            return true;
+                        return false;//值为空，则不选中
+                    });
+                }
+            }
+        });
+        addressUtil.loadData($("#user-form select[name='proviceId']"), addressUtil.getProvinces());
+        $("#user-form select[name='proviceId']").change(function(){
+            var val = $(this).val();
+            $("#user-form select[name='cityId']").html('');
+            $("#user-form select[name='regionId']").html('');
+            if(val){
+                var p = addressUtil.getProvinceByCode(val);
+                var cities = addressUtil.getCities(p.i);
+                addressUtil.loadData($("#user-form select[name='cityId']"), cities);
+            }
+        });
+        $("#user-form select[name='cityId']").change(function(){
+            var val = $(this).val();
+            $("#user-form select[name='regionId']").html('');
+            if(val){
+                var c = addressUtil.getCityByCode(val);
+                var regions = addressUtil.getRegions(c.i);
+                addressUtil.loadData($("#user-form select[name='regionId']"), regions);
+            }
+        });
+        $("#user-form select[name='regionId']").change(function(){
+            var address = $("#user-form select[name='proviceId']").find("option:selected").text()
+                + $("#user-form select[name='cityId']").find("option:selected").text()
+                + $("#user-form select[name='regionId']").find("option:selected").text()
+                + $("#user-form input[name='street']").val();
+            $("#user-form input[name='fullAddress']").val(address);
+        });
+        $("#user-form input[name='street']").change(function(){
+            var address = $("#user-form select[name='proviceId']").find("option:selected").text()
+                + $("#user-form select[name='cityId']").find("option:selected").text()
+                + $("#user-form select[name='regionId']").find("option:selected").text()
+                + $("#user-form input[name='street']").val();
+            $("#user-form input[name='fullAddress']").val(address);
+        });
+        $("#user-form").bootstrapForm("validForm", {
+            url: "/user/add",
+            dialogId: "user-dialog",
+            tableId: "user-table",
+            submitBtnId: "user-saveBtn",
+            fields: {
+                fullName: {
+                    validators: {
+                        notEmpty: {message: '姓名不能为空'}
+                    }
+                },
+                username: {
+                    validators: {
+                        notEmpty: {message: '帐号不能为空'}
+                    }
+                },
+                password: {
+                    validators: {
+                        notEmpty: {message: '密码不能为空'}
+                    }
+                },
+                age: {
+                    validators: {
+                        notEmpty: {message: '年龄不能为空'},
+                        regexp: {
+                            regexp: /^([1-9][0-9]{0,2})|0$/,
+                            message: '年龄格式不正确'
+                        }
+                    }
+                },
+                telephone: {
+                    validators: {
+                        notEmpty: {message: '手机号不能为空'},
+                        regexp: {
+                            regexp: /^((1[3,5,8][0-9])|(14[5,7])|(17[0,6,7,8])|(19[7]))\d{8}$/,
+                            message: '手机号格式不正确'
+                        }
+                    }
+                },
+                email: {
+                    validators: {
+                        notEmpty: {message: '邮箱不能为空'},
+                        regexp: {
+                            regexp: /^(\w)+(\.\w+)*@(\w)+((\.\w+)+)$/,
+                            message: '邮箱地址格式不正确'
+                        }
+                    }
+                },
+                proviceId: {
+                    validators: {
+                        notEmpty: {message: '省不能为空'}
+                    }
+                },
+                cityId: {
+                    validators: {
+                        notEmpty: {message: '市不能为空'}
+                    }
+                },
+                regionId: {
+                    validators: {
+                        notEmpty: {message: '区不能为空'}
+                    }
+                },
+                street: {
+                    validators: {
+                        notEmpty: {message: '街道地址不能为空'}
+                    }
+                },
+                job: {
+                    validators: {
+                        notEmpty: {message: '职位不能为空'}
+                    }
+                },
+                level: {
+                    validators: {
+                        notEmpty: {message: '等级不能为空'},
+                        integer: {
+                            message: '等级为数字'
+                        }
+                    }
+                },
+                state: {
+                    validators: {
+                        notEmpty: {message: '状态不能为空'}
+                    }
+                }
+            },
+            beforeSubmit: function(form){
+                form.find("input[name^='roles']").remove();
+                var vals = $("#user-form select[name='roleIds']").val();
+                $.each(vals, function(i, val){
+                    form.append('<input type="hidden" name="roles['+i+'].roleId" value="'+val+'"/>');
+                });
+            }
+        });
+    });
+</script>
+<form id="user-form" class="form-horizontal" method="POST">
+    <input type="hidden" name="fullAddress"/>
+    <div class="form-group">
+        <label class="col-lg-3 control-label">姓名</label>
+        <div class="col-lg-5">
+            <input type="text" class="form-control" name="fullName" maxlength="32"/>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-lg-3 control-label">帐号</label>
+        <div class="col-lg-5">
+            <input type="text" class="form-control" name="username" maxlength="20"/>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-lg-3 control-label">密码</label>
+        <div class="col-lg-5">
+            <input type="password" class="form-control" name="password" maxlength="32"/>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-lg-3 control-label">性别</label>
+        <div class="col-lg-5">
+            <label><input type="radio" name="sex" value="男" checked/>男</label>&nbsp;
+            <label><input type="radio" name="sex" value="女"/>女</label>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-lg-3 control-label">年龄</label>
+        <div class="col-lg-5">
+            <input type="text" class="form-control" name="age" maxlength="10"/>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-lg-3 control-label">手机号</label>
+        <div class="col-lg-5">
+            <input type="text" class="form-control" name="telephone" maxlength="11"/>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-lg-3 control-label">邮箱</label>
+        <div class="col-lg-5">
+            <input type="text" class="form-control" name="email" maxlength="32"/>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-lg-3 control-label">省</label>
+        <div class="col-lg-5">
+            <select class="form-control" name="proviceId"></select>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-lg-3 control-label">市</label>
+        <div class="col-lg-5">
+            <select class="form-control" name="cityId"></select>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-lg-3 control-label">区</label>
+        <div class="col-lg-5">
+            <select class="form-control" name="regionId"></select>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-lg-3 control-label">街道地址</label>
+        <div class="col-lg-5">
+            <input type="text" class="form-control" name="street" maxlength="50"/>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-lg-3 control-label">职位</label>
+        <div class="col-lg-5">
+            <input type="text" class="form-control" name="job" maxlength="50"/>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-lg-3 control-label">启/禁用</label>
+        <div class="col-lg-5">
+            <label><input type="radio" name="enabled" value="1" checked/>启用</label>
+            <label><input type="radio" name="enabled" value="2"/>禁用</label>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-lg-3 control-label">等级</label>
+        <div class="col-lg-5">
+            <input type="text" class="form-control" name="level" maxlength="10"/>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-lg-3 control-label">状态</label>
+        <div class="col-lg-5">
+            <select class="form-control" name="state">
+                <option value="">--请选择--</option>
+                <option value="0">离职</option>
+                <option value="1" selected>在职</option>
+                <option value="2">请假</option>
+                <option value="3">调休</option>
+                <option value="4">年假</option>
+                <option value="5">病假</option>
+            </select>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-lg-3 control-label">角色</label>
+        <div class="col-lg-5">
+            <select class="form-control" name="roleIds" multiple="multiple" style="width:100%">
+                <option value="">--请选择--</option>
+            </select>
+        </div>
+    </div>
+</form>

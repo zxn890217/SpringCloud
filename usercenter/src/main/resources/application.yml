@@ -29,6 +29,9 @@ spring:
     cache: true
   application:
     name: usercenter
+  redis:
+    host: localhost
+    port: 6379
 
 eureka:
   port: ${server.port}

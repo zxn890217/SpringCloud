@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<script>
+    $(function(){
+        var dialogOptions = BootstrapDialog.getDialog("menu-dialog").options;
+        if(dialogOptions.data){
+            $("#menu-form input[name='parent.name']").val(dialogOptions.data.name);
+            $("#menu-form input[name='parent.id']").val(dialogOptions.data.id);
+        }
+        $("#menu-form").bootstrapForm("validForm", {
+            ajaxOpts:{
+                url: "/menu",
+                contentType:"application/json"
+            },
+            dialogId: "menu-dialog",
+            submitBtnId: "menu-saveBtn",
+            fields: {
+                name: {
+                    validators: {
+                        notEmpty: {message: '名称不能为空'}
+                    }
+                },
+                seq: {
+                    validators: {
+                        notEmpty: {message: '排序不能为空'},
+                        integer: {message: '排序为数字'}
+                    }
+                },
+                iconClass: {
+                    validators: {
+                        callback: {
+                            message: "图标类型不能为空",
+                            callback: function(fieldValue, validator){
+                                var pid = $("#menu-form").find("select[name='pid']").val();
+                                var visable = $("#menu-form").find("select[name='visable']").val();
+                                if(!pid && visable=='1'){
+                                    if(fieldValue==""){
+                                        return false;
+                                    }
+                                }
+                                return true;
+                            }
+                        }
+                    }
+                }
+            },
+            reValidateFields:["url","iconClass"],
+            submitOnSuccess: function(r){
+                if(r.success){
+                    $('#menu-table').treegridData('reload');
+                }
+            }
+        });
+
+        $("#menu-parent-select").on("dblclick", function(){
+            utils.dialog({
+                id: "menu-tree-dialog",
+                title: "修改",
+                url: "/pages/menu/menu-tree.html",
+                data: {
+                    callback: function(row){
+                        $("#menu-form input[name='parent.name']").val(row.name);
+                        $("#menu-form input[name='parent.id']").val(row.id);
+                    }}
+            });
+        });
+
+        $("#menu-parent-clear-btn").on("click", function(){
+            $("#menu-form input[name='parent.name']").val("");
+            $("#menu-form input[name='parent.id']").val("");
+        });
+
+        $("#menu-form input[name='authority.code']").on("dblclick", function(){
+            utils.dialog({
+                id: "menu-authority-dialog",
+                title: "修改",
+                url: "/pages/menu/menu-authority.html",
+                closable: true,
+                data: {
+                    callback: function(row){
+                        $("#menu-form input[name='authority.id']").val(row.id);
+                        $("#menu-form input[name='authority.code']").val(row.code);
+                    }}
+            });
+        });
+
+        $("#menu-authority-clear-btn").on("click", function(){
+            $("#menu-form input[name='authority.id']").val("");
+            $("#menu-form input[name='authority.code']").val("");
+        });
+    });
+</script>
+<form id="menu-form" class="form-horizontal" method="POST">
+    <div class="form-group">
+        <label class="col-lg-3 control-label">名称</label>
+        <div class="col-lg-5">
+            <input type="text" class="form-control" name="name" maxlength="32"/>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-lg-3 control-label">URL</label>
+        <div class="col-lg-5">
+            <input type="text" class="form-control" name="url" maxlength="100"/>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-lg-3 control-label">排序</label>
+        <div class="col-lg-5">
+            <input type="text" class="form-control" name="seq" maxlength="10"/>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-lg-3 control-label">所属系统</label>
+        <div class="col-lg-5">
+            <input type="text" class="form-control" name="fromType" maxlength="20"/>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-lg-3 control-label">父级菜单</label>
+        <div class="col-lg-5">
+            <input type="hidden" name="parent.id"/>
+            <input type="text" name="parent.name" class="form-control" readonly/>
+        </div>
+        <div class="col-lg-2">
+            <button type="button" id="menu-parent-clear-btn" class="btn btn-default">清除</button>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-lg-3 control-label">权限代码</label>
+        <div class="col-lg-5">
+            <input type="hidden" name="authority.id"/>
+            <input type="text" class="form-control" name="authority.code"/>
+        </div>
+        <div class="col-lg-2">
+            <button type="button" id="menu-authority-clear-btn" class="btn btn-default">清除</button>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-lg-3 control-label">图标样式类型</label>
+        <div class="col-lg-5">
+            <input type="text" class="form-control" name="iconClass" maxlength="20"/>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-lg-3 control-label">状态</label>
+        <div class="col-lg-5">
+            <label><input type="radio" name="state" value="1" checked/>启用</label>
+            <label><input type="radio" name="state" value="0"/>禁用</label>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-lg-3 control-label">可视</label>
+        <div class="col-lg-5">
+            <label><input type="radio" name="visable" value="1" checked/>是</label>
+            <label><input type="radio" name="visable" value="0"/>否</label>
+        </div>
+    </div>
+</form>

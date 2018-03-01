@@ -11,7 +11,15 @@ import java.util.List;
  */
 public interface MenuDao extends BaseDao<Menu, QMenu>{
     /**
+     * 获取不含权限的菜单
+     * */
+    public Menu getWithoutAuthority(Long id);
+    /**
      * 查询菜单树
      * */
-    public List<Menu> getMenuTree(QMenu query);
+    public List<Menu> queryByUserAndFromType(QMenu query);
+    /**
+     * 根据id获取子级菜单
+     * */
+    public List<Menu> getChildren(Long id);
 }

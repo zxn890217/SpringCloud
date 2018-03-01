@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<script>
+    $(function(){
+        $("#role-form").bootstrapForm("load", {
+            url: "/role/detail",
+            data: BootstrapDialog.getDialog("role-dialog").options.data,
+            success: function(data){
+                if(data.menus){
+                    var container = $("#menus-container");
+                    $.each(data.menus, function (i, n) {
+                        container.append(n.name+" ");
+                    });
+                }
+            }
+        });
+    });
+</script>
+<form id="role-form" class="form-horizontal">
+    <div class="form-group">
+        <label class="col-lg-3 control-label">角色ID</label>
+        <div class="col-lg-5">
+            <input type="text" class="form-control" name="roleId" readonly/>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-lg-3 control-label">角色名称</label>
+        <div class="col-lg-5">
+            <input type="text" class="form-control" name="name" readonly/>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-lg-3 control-label">状态</label>
+        <div class="col-lg-5">
+            <label><input type="radio" name="state" value="1" disabled/>启用</label>
+            <label><input type="radio" name="state" value="0" disabled/>禁用</label>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-lg-3 control-label">菜单</label>
+        <div class="col-lg-5">
+            <label id="menus-container" class="form-control" style="min-height:34px; height: auto"></label>
+        </div>
+    </div>
+</form>

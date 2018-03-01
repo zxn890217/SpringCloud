@@ -1,0 +1,123 @@
+<html>
+	<head>
+		<meta charset="utf-8"/>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+		<title>Demo</title>
+		<meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport"/>
+		<!-- Bootstrap 3.3.7 -->
+		<link rel="stylesheet" href="/plugins/bootstrap/css/bootstrap.min.css"/>
+		<!-- Font Awesome -->
+		<link rel="stylesheet" href="/plugins/font-awesome/css/font-awesome.min.css"/>
+		<!-- Ionicons -->
+		<link rel="stylesheet" href="/plugins/Ionicons/css/ionicons.min.css"/>
+		<!-- Theme style -->
+		<link rel="stylesheet" href="/ui/css/AdminLTE.min.css"/>
+		<!-- AdminLTE Skins. Choose a skin from the css/skins
+		   folder instead of downloading all of them to reduce the load. -->
+		<link rel="stylesheet" href="/ui/css/skins/_all-skins.min.css"/>
+		<link rel="stylesheet" href="/ui/css/form.css"/>
+		<link rel="stylesheet" href="/plugins/table/bootstrap-table.min.css"/>
+		<link rel="stylesheet" href="/plugins/dialog/css/bootstrap-dialog.css"/>
+		<link rel="stylesheet" href="/plugins/bootstrap-validator/css/bootstrapValidator.min.css"/>
+		<link rel="stylesheet" href="/plugins/lightbox/css/Lobibox.css"/>
+		<style>
+			#login-rememberMe{
+				width: 16px;
+				height: 16px;
+				vertical-align:text-bottom !important;
+				*margin-bottom:-2px !important;
+				padding: 0 !important;
+			}
+		</style>
+		<!--[if lt IE 9]>
+		<script src="/plugins/html5shiv/html5shiv.min.js"></script>
+		<script src="/plugins/respond/respond.min.js"></script>
+		<![endif]-->
+		<script src="/plugins/jquery/jquery.min.js"></script>
+		<script src="/plugins/cookie/jquery.cookie.js"></script>
+		<script src="/plugins/lightbox/js/lobibox.js"></script>
+		<script src="/plugins/bootstrap-validator/js/bootstrapValidator.min.js"></script>
+		<script src="/plugins/bootstrap-validator/js/language/zh_CN.js"></script>
+		<script src="/ui/js/utils.js"></script>
+		<script src="/plugins/jquery.bootstrapForm.js"></script>
+		<script>
+			$(function(){
+                $("#login-form").bootstrapForm("validForm",{
+					submitBtnId: "login-btn",
+					ajaxOpts:{url: "/admin/login"},
+					fields: {
+                        username: {
+							validators: {
+								notEmpty: {
+									message: '账号不能为空'
+								}
+							}
+						},
+						password: {
+							validators: {
+								notEmpty: {
+									message: '密码不能为空'
+								},
+								regexp: {
+									message: '密码为6到9位英文字母或数字',
+									regexp: /^[a-zA-Z0-9]{6,9}$/
+								}
+							}
+						}
+					},
+                    submitOnSuccess: function(r){
+                        if(r.success){
+                            var date = new Date();
+                            date.setTime(date.getTime() + 86400000);
+                            $.cookie('user_login_token', r.result, {path: '/', expires: date});
+                            document.location.href='/pages/admin/main.html';
+                        }
+                        else{
+                            $("#login-form").find("input[name='password']").val("");
+                            $("#showError").html(r.msg);
+                            return false;
+                        }
+					},
+                    reValidateFields:["password"]
+				});
+			});
+		</script>
+	</head>
+	<body class="hold-transition login-page">
+		<div class="login-box">
+			<div class="login-logo">
+				<a href="#"><img src="/ui/img/logo.png" style="width:56px;height:56px;"/><b>用户中心</b></a>
+			</div>
+			<!-- /.login-logo -->
+			<div class="login-box-body">
+				<p class="login-box-msg" style="padding: 0 20px;">请先登录...</p>
+				<div class="content" style="position:relative;padding-left: 25px;padding-right: 25px; min-height: 200px;">
+					<form id="login-form" class="form-horizontal">
+						<div class="form-group">
+							<div class="col-lg-12">
+								<input type="text" name="username" class="form-control" maxLength="32" placeholder="账号" style="padding-left: 42px;padding-right:5px;">
+								<span class="glyphicon glyphicon-user form-control-feedback" style="left:16px;"></span>
+							</div>
+						</div>
+						<div class="form-group">
+							<div class="col-lg-12">
+								<input type="password" name="password" class="form-control" maxLength="32" placeholder="密码" style="padding-left: 42px;padding-right:5px;">
+								<span class="glyphicon glyphicon-lock form-control-feedback" style="left:16px;"></span>
+							</div>
+						</div>
+						<div class="form-group">
+							<div class="col-lg-12">
+								<span style="color:red;" id="showError"></span>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-xs-12">
+								<button class="btn btn-primary btn-block btn-flat" id="login-btn">登录</button>
+							</div><!-- /.col -->
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

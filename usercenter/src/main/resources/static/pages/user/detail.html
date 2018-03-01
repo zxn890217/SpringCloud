@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<script>
+    $(function(){
+        var dialogData = BootstrapDialog.getDialog("user-dialog").options.data;
+        $("#user-form").bootstrapForm("load", {url: "/user/detail", data: {userId: dialogData.userId}});
+    });
+</script>
+<form id="user-form" class="form-horizontal">
+    <div class="form-group">
+        <label class="col-lg-3 control-label">用户ID</label>
+        <div class="col-lg-5">
+            <input type="text" class="form-control" name="userId" readonly/>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-lg-3 control-label">姓名</label>
+        <div class="col-lg-5">
+            <input type="text" class="form-control" name="fullName" readonly/>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-lg-3 control-label">帐号</label>
+        <div class="col-lg-5">
+            <input type="text" class="form-control" name="username" readonly/>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-lg-3 control-label">性别</label>
+        <div class="col-lg-5">
+            <label><input type="radio" name="sex" value="男" disabled/>男</label>&nbsp;
+            <label><input type="radio" name="sex" value="女" disabled/>女</label>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-lg-3 control-label">年龄</label>
+        <div class="col-lg-5">
+            <input type="text" class="form-control" name="age" readonly/>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-lg-3 control-label">手机号</label>
+        <div class="col-lg-5">
+            <input type="text" class="form-control" name="telephone" readonly/>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-lg-3 control-label">邮箱</label>
+        <div class="col-lg-5">
+            <input type="text" class="form-control" name="email" readonly/>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-lg-3 control-label">地址</label>
+        <div class="col-lg-5">
+            <input type="text" class="form-control" name="fullAddress" readonly/>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-lg-3 control-label">职位</label>
+        <div class="col-lg-5">
+            <input type="text" class="form-control" name="job" readonly/>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-lg-3 control-label">启/禁用</label>
+        <div class="col-lg-5">
+            <label><input type="radio" name="enabled" value="1" disabled/>启用</label>
+            <label><input type="radio" name="enabled" value="2" disabled/>禁用</label>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-lg-3 control-label">等级</label>
+        <div class="col-lg-5">
+            <input type="text" class="form-control" name="level" maxlength="10"/>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-lg-3 control-label">状态</label>
+        <div class="col-lg-5">
+            <select class="form-control" name="state" placeholder="状态" disabled>
+                <option value="">--请选择--</option>
+                <option value="0">离职</option>
+                <option value="1">在职</option>
+                <option value="2">请假</option>
+                <option value="3">调休</option>
+                <option value="4">年假</option>
+                <option value="5">病假</option>
+            </select>
+        </div>
+    </div>
+</form>

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<script>
+    $(function(){
+        utils.bootstrapTable({
+            id: "menu-authority-table",
+            url: "/authority",
+            singleSelect: true,
+            pagination: true,
+            searchForm: 'menu-authority-searchForm',
+            columns: [
+                {field:'check', checkbox:true},
+                {field:'id', title:'权限ID', visible:false},
+                {field:'name', title:'名称'},
+                {field:'code', title:'代码'}
+            ],
+            buttons: [
+                {text:"选择", iconCls:"glyphicon glyphicon-plus",
+                    handler:function(){
+                        var rows = $("#menu-authority-table").bootstrapTable("getSelections");
+                        if(rows.length!=1){
+                            Lobibox.alert('info', {title: "提示", msg: "请选定一行数据"});
+                        }
+                        else{
+                            var dialog = BootstrapDialog.getDialog("menu-authority-dialog");
+                            dialog.options.data.callback(rows[0]);
+                            dialog.close();
+                        }
+                    }}
+            ],
+            onDblClickRow: function(row, jq){
+                var dialog = BootstrapDialog.getDialog("menu-authority-dialog");
+                dialog.options.data.callback(row);
+                dialog.close();
+            }
+        });
+    });
+</script>
+<div class="panel panel-default">
+    <div class="panel-body">
+        <form id="menu-authority-searchForm" class="searchform">
+            <div><input class="form-control" type="text" name="name" placeholder="权限名称"/></div>
+        </form>
+    </div>
+</div>
+<table id="menu-authority-table"></table>

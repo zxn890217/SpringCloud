@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<script>
+    $(function(){
+        utils.ajax({
+            url: "/menu/query",
+            type: "GET",
+            data: {type: '1'},
+            async: false,
+            success: function(r){
+                var select = $("#menu-form select[name='pid']");
+                $.each(r, function (i, n) {
+                    select.append('<option value="'+n.id+'">'+n.name+'</option>');
+                });
+                var options = BootstrapDialog.getDialog("menu-dialog").options;
+                if(options.data && options.data.pid){
+                    select.val(options.data.pid);
+                }
+            }
+        });
+        var data = BootstrapDialog.getDialog("menu-dialog").options.data;
+        $("#menu-form").bootstrapForm("load", {url: "/menu/"+data.id});
+    });
+</script>
+<form id="menu-form" class="form-horizontal">
+    <div class="form-group">
+        <label class="col-lg-3 control-label">ID</label>
+        <div class="col-lg-5">
+            <input type="text" class="form-control" name="id" readonly/>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-lg-3 control-label">名称</label>
+        <div class="col-lg-5">
+            <input type="text" class="form-control" name="name" readonly/>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-lg-3 control-label">URL</label>
+        <div class="col-lg-5">
+            <input type="text" class="form-control" name="url" readonly/>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-lg-3 control-label">排序</label>
+        <div class="col-lg-5">
+            <input type="text" class="form-control" name="seq" readonly/>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-lg-3 control-label">所属系统</label>
+        <div class="col-lg-5">
+            <input type="text" class="form-control" name="fromType" maxlength="20"/>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-lg-3 control-label">父级菜单</label>
+        <div class="col-lg-5">
+            <input type="hidden" name="pid"/>
+            <input type="text" id="menu-parent-select" class="form-control" readonly/>
+        </div>
+        <div class="col-lg-2">
+            <button type="button" id="menu-parent-clear-btn" class="btn btn-default">清除</button>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-lg-3 control-label">图标样式类型</label>
+        <div class="col-lg-5">
+            <input type="text" class="form-control" name="iconClass" readonly/>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-lg-3 control-label">权限名称</label>
+        <div class="col-lg-5">
+            <input type="text" class="form-control" name="authority.name" readonly/>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-lg-3 control-label">权限代码</label>
+        <div class="col-lg-5">
+            <input type="text" class="form-control" name="authority.code" readonly/>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-lg-3 control-label">状态</label>
+        <div class="col-lg-5">
+            <input type="radio" name="state" value="1" disabled/>启用
+            <input type="radio" name="state" value="0" disabled/>禁用
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-lg-3 control-label">可视</label>
+        <div class="col-lg-5">
+            <input type="radio" name="visable" value="1" disabled/>是
+            <input type="radio" name="visable" value="0" disabled/>否
+        </div>
+    </div>
+</form>

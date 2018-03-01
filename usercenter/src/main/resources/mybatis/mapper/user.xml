@@ -23,6 +23,16 @@
         <collection property="roles" ofType="role" javaType="java.util.ArrayList">
             <id property="id" column="role_id"/>
             <result property="name" column="role_name"/>
+            <collection property="authorities" ofType="authority" javaType="java.util.ArrayList">
+                <id property="id" column="authority_id"/>
+                <result property="name" column="authority_name"/>
+                <collection property="resources" ofType="resource" javaType="java.util.ArrayList">
+                    <id property="id" column="resource_id"/>
+                    <result property="type" column="type"/>
+                    <result property="content" column="content"/>
+                    <result property="enable" column="enable"/>
+                </collection>
+            </collection>
         </collection>
     </resultMap>
 
@@ -35,6 +45,21 @@
         LEFT JOIN user_role ur on u.id=ur.user_id
         LEFT JOIN role r on ur.role_id=r.id
         where u.id = #{id}
+    </select>
+
+    <select id="loadUser" resultMap="UserMap">
+        SELECT u.*,r.id role_id,r.name role_name,a.id authority_id, a.name authority_name,rc.id resource_id,rc.type,rc.content,rc.enable
+        FROM user u
+        LEFT JOIN user_role ur ON u.id=ur.user_id
+        LEFT JOIN role_authority ra ON ur.role_id=ra.role_id
+        LEFT JOIN authority_resource ar ON ar.authority_id=ar.authority_id
+        LEFT JOIN role r ON ur.role_id=r.id
+        LEFT JOIN authority a ON ra.authority_id=a.id
+        LEFT JOIN resource rc ON ar.resource_id=rc.id
+        WHERE u.username = #{username}
+        <if test = "password != null">
+        AND u.password = #{password}
+        </if>
     </select>
 
     <insert id="insert" parameterType="user" useGeneratedKeys="true" keyProperty="id">
@@ -134,7 +159,7 @@
         <if test="locked != null">AND u.locked = #{locked},</if>
     </sql>
 
-    <select id="findByPage" parameterType="quser" resultMap="UserMap">
+    <select id="query" parameterType="quser" resultMap="UserMap">
         SELECT u.*,r.id role_id,r.name role_name FROM user u
         LEFT JOIN user_role ur on u.id=ur.user_id
         LEFT JOIN role r on ur.role_id=r.id

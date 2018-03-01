@@ -4,6 +4,7 @@
     <resultMap type="authority" id="AuthorityMap">
         <id property="id" column="id"/>
         <result property="name" column="name"/>
+        <result property="code" column="code"/>
         <collection property="resources" ofType="resource" javaType="java.util.ArrayList">
             <id property="id" column="resource_id"/>
             <result property="type" column="type"/>
@@ -24,8 +25,8 @@
     </select>
 
     <insert id="insert" parameterType="authority" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO authority(name)
-        VALUES(#{name})
+        INSERT INTO authority(name,code)
+        VALUES(#{name},#{code})
     </insert>
 
     <insert id="saveAuthorityResource" parameterType="authority">
@@ -40,6 +41,7 @@
         UPDATE authority
         <set>
             name = #{name},
+            code = #{code},
         </set>
         WHERE id = #{id}
     </update>
@@ -48,6 +50,7 @@
         UPDATE authority
         <set>
             <if test="name != null">name = #{name},</if>
+            <if test="code != null">code = #{code},</if>
         </set>
         WHERE id = #{id}
     </update>
@@ -66,15 +69,17 @@
         select count(*) from authority
         <where>
             <if test="name != null">name = #{name},</if>
+            <if test="code != null">code = #{code},</if>
         </where>
     </select>
 
     <sql id="select-conditions">
         <if test="id != null">AND a.id = #{id}</if>
-        <if test="name != null">AND a.name = #{name}</if>
+        <if test="name != null">AND a.name like CONCAT('%',#{name},'%')</if>
+        <if test="code != null">AND a.code like CONCAT('%',#{code},'%')</if>
     </sql>
 
-    <select id="findByPage" parameterType="qauthority" resultMap="AuthorityMap">
+    <select id="query" parameterType="qauthority" resultMap="AuthorityMap">
         SELECT a.*,r.id resource_id,r.type,r.content,r.enable FROM authority a
         LEFT JOIN authority_resource ar on a.id=ar.authority_id
         LEFT JOIN resource r on ar.resource_id=r.id

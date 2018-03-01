@@ -64,7 +64,7 @@
         <if test="enable != null">AND enable = #{enable}</if>
     </sql>
 
-    <select id="findByPage" parameterType="qresource" resultMap="ResourceMap">
+    <select id="query" parameterType="qresource" resultMap="ResourceMap">
         SELECT <include refid="select-fields"/> FROM resource
         <where>
             <include refid="select-conditions"/>

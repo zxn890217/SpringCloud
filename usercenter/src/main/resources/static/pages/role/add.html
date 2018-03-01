@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<script>
+    $(function(){
+        utils.ajax({
+            url: "/menu/query",
+            data: {type: '2'},
+            async: false,
+            success: function(r){
+                var container = $("#menus-container");
+                $.each(r, function (i, n) {
+                    container.append('<div><label><input type="checkbox" value="'+n.menuId+'">'+n.name+'</label></div>');
+                });
+            }
+        });
+        $("#role-form").bootstrapForm("validForm", {
+            url: "/role/add",
+            dialogId: "role-dialog",
+            tableId: "role-table",
+            submitBtnId: "role-saveBtn",
+            fields: {
+                name: {
+                    validators: {
+                        notEmpty: {message: '角色名称不能为空'}
+                    }
+                }
+            },
+            beforeSubmit: function(form){
+                form.find("input[name^='menus']").remove();
+                $("#menus-container :checked").each(function(i, e){
+                    form.append('<input type="hidden" name="menus['+i+'].menuId" value="'+$(e).val()+'"/>');
+                });
+            }
+        });
+    });
+</script>
+<form id="role-form" class="form-horizontal" method="POST">
+    <div class="form-group">
+        <label class="col-lg-3 control-label">角色名称</label>
+        <div class="col-lg-5">
+            <input type="text" class="form-control" name="name" maxlength="32"/>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-lg-3 control-label">状态</label>
+        <div class="col-lg-5">
+            <label><input type="radio" name="state" value="1" checked/>启用</label>
+            <label><input type="radio" name="state" value="0"/>禁用</label>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-lg-3 control-label">菜单</label>
+        <div class="col-lg-5">
+            <div id="menus-container"  style="border: 1px solid lightgrey; padding: 3px; max-height: 200px;"></div>
+        </div>
+    </div>
+</form>
