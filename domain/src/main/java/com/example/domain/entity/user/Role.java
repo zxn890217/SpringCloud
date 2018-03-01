@@ -2,12 +2,13 @@ package com.example.domain.entity.user;
 
 import org.apache.ibatis.type.Alias;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
  * Created by zxn on 2018/2/8.
  */
-public class Role {
+public class Role implements Serializable{
     //角色ID
     private Long id;
     //角色名称

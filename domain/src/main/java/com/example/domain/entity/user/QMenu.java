@@ -10,12 +10,14 @@ public class QMenu extends QueryBase{
     private Long id;
     //名称
     private String name;
-    //类型（1：一级菜单；2：二级菜单）
-    private String type;
+    //菜单路径（例：/1/2/3/）
+    private String path;
     //来源，表示各个子系统的菜单分类
     private String fromType;
     //URL
-    private Long resourceId;
+    private Long authorityId;
+    //url
+    private String url;
     //排序
     private Integer seq;
     //父级菜单ID
@@ -45,12 +47,12 @@ public class QMenu extends QueryBase{
         this.name = name;
     }
 
-    public String getType(){
-        return type;
+    public String getPath() {
+        return path;
     }
 
-    public void setType(String type){
-        this.type = type;
+    public void setPath(String path) {
+        this.path = path;
     }
 
     public String getFromType() {
@@ -61,12 +63,20 @@ public class QMenu extends QueryBase{
         this.fromType = fromType;
     }
 
-    public Long getResourceId() {
-        return resourceId;
+    public Long getAuthorityId() {
+        return authorityId;
     }
 
-    public void setResourceId(Long resourceId) {
-        this.resourceId = resourceId;
+    public void setAuthorityId(Long authorityId) {
+        this.authorityId = authorityId;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
     }
 
     public Integer getSeq(){

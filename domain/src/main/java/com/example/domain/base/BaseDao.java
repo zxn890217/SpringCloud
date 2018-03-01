@@ -31,9 +31,9 @@ public interface BaseDao<T, Q extends QueryBase> {
      * */
     public int exists(T entity);
     /**
-     * 分页查询列表
+     * 查询列表
      * */
-    public List<T> findByPage(Q query);
+    public List<T> query(Q query);
     /**
      * 统计
      * */

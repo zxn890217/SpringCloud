@@ -10,16 +10,18 @@ public class Menu {
     private Long id;
     //名称
     private String name;
-    //类型（1：一级菜单；2：二级菜单）
-    private String type;
+    //菜单路径（例：/1/2/3/）
+    private String path;
     //来源，表示各个子系统的菜单分类
     private String fromType;
     //菜单资源
-    private Resource resource;
+    private Authority authority;
+    //url
+    private String url;
     //排序
     private Integer seq;
-    //父级菜单ID
-    private Integer pid;
+    //父级菜单
+    private Menu parent;
     //图标样式类型
     private String iconClass;
     //状态（1：可用；0：禁用）
@@ -45,12 +47,12 @@ public class Menu {
         this.name = name;
     }
 
-    public String getType(){
-        return type;
+    public String getPath() {
+        return path;
     }
 
-    public void setType(String type){
-        this.type = type;
+    public void setPath(String path) {
+        this.path = path;
     }
 
     public String getFromType() {
@@ -61,12 +63,20 @@ public class Menu {
         this.fromType = fromType;
     }
 
-    public Resource getResource() {
-        return resource;
+    public Authority getAuthority() {
+        return authority;
     }
 
-    public void setResource(Resource resource) {
-        this.resource = resource;
+    public void setAuthority(Authority authority) {
+        this.authority = authority;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
     }
 
     public Integer getSeq(){
@@ -77,12 +87,12 @@ public class Menu {
         this.seq = seq;
     }
 
-    public Integer getPid(){
-        return pid;
+    public Menu getParent() {
+        return parent;
     }
 
-    public void setPid(Integer pid){
-        this.pid = pid;
+    public void setParent(Menu parent) {
+        this.parent = parent;
     }
 
     public String getIconClass(){

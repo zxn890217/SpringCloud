@@ -1,12 +1,14 @@
 package com.example.domain.entity.user;
 
+import java.io.Serializable;
+
 /**
  * Created by ZXN on 2018/2/21.
  */
-public class Resource {
+public class Resource implements Serializable {
     //资源ID
     private Long id;
-    //类型（1：资源路径；2：资源路径正则表达式；3：无权限控制路径）
+    //类型（1：资源路径；2：资源路径正则表达式；3：无权限控制路径；4：登录权限控制路径）
     private Integer type;
     //资源内容
     private String content;

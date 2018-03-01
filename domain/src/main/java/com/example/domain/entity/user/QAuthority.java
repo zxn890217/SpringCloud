@@ -11,6 +11,8 @@ public class QAuthority extends QueryBase {
     private Long id;
     //权限名称
     private String name;
+    //权限代码
+    private String code;
 
     public Long getId() {
         return id;
@@ -26,5 +28,13 @@ public class QAuthority extends QueryBase {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
     }
 }

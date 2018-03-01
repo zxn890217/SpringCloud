@@ -3,13 +3,14 @@ package com.example.domain.entity.user;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.ibatis.type.Alias;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Set;
 
 /**
  * Created by zxn on 2018/2/8.
  */
-public class User {
+public class User implements Serializable{
     //用户ID
     private Long id;
     //姓名

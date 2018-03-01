@@ -34,10 +34,14 @@ public abstract class BaseService<T, Q extends QueryBase> {
     }
 
     public Page findByPage(Q query){
-        return new Page<T>(getDao().findByPage(query), getDao().count(query));
+        return new Page<T>(getDao().query(query), getDao().count(query));
     }
 
     public int count(Q query){
         return getDao().count(query);
+    }
+
+    public List<T> query(Q query){
+        return getDao().query(query);
     }
 }
