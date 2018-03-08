@@ -67,7 +67,6 @@
                     var ajaxOpts = {
                         type: "POST",
                         dataType: "json",
-                        data: jq.serializeJson(),
                         success:function(r){
                             if(options.submitOnSuccess){
                                 if(options.submitOnSuccess(r)==false){
@@ -122,6 +121,7 @@
                         }
                     };
                     ajaxOpts = $.extend(ajaxOpts, options.ajaxOpts||{});
+                    console.log(ajaxOpts);
                     if(ajaxOpts.contentType=="application/json"){
                         ajaxOpts.data=JSON.stringify(jq.serializeJson());
                     }
@@ -186,6 +186,10 @@
             }
             else if(value.constructor == Date){
                 value = value.Format("yyyy-MM-dd HH:mm:ss");
+                this.fillEl(form, key, value);
+            }
+            else if(value.constructor == Boolean){
+                value = value+"";
                 this.fillEl(form, key, value);
             }
             else{

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<script>
+$(function(){
+    utils.bootstrapTable({
+        id: "authority-table",
+        url: "/authority/page",
+        singleSelect: true,
+        pagination: true,
+        searchForm: 'authority-searchForm',
+        columns: [
+            {field:'check', checkbox:true},
+            {field:'id', title:'权限ID', visible:false},
+            {field:'name', title:'名称'},
+            {field:'code', title:'代码'}
+        ],
+        buttons: [
+            {text:"添加", iconCls:"glyphicon glyphicon-plus",
+                handler:function(){
+                    utils.dialog({
+                        id: "authority-dialog",
+                        title: "添加",
+                        url: "/pages/authority/add.html",
+                        buttons: [{label: "保存", id: "authority-saveBtn"}]
+                    });
+                }},
+            {text:"修改", iconCls:"glyphicon glyphicon-pencil",
+                handler:function(){
+                    var rows = $("#authority-table").bootstrapTable("getSelections");
+                    if(rows.length!=1){
+                        Lobibox.alert('info', {title: "提示", msg: "请选定一行数据"});
+                    }
+                    else{
+                        utils.dialog({
+                            id: "authority-dialog",
+                            title: "修改",
+                            url: "/pages/authority/update.html",
+                            buttons: [{label: "修改", id: "authority-editBtn"}],
+                            data: rows[0]
+                        });
+                    }
+                }},
+            {text:"删除", iconCls:"glyphicon glyphicon-remove",
+                handler:function(){
+                    var rows = $("#authority-table").bootstrapTable('getSelections');
+                    if(rows.length==0){
+                        Lobibox.alert('info', {title: "提示", msg: "请先选中要删除的记录"});
+                    }
+                    else{
+                        utils.deleteAjax({
+                            url: "/authority/"+rows[0].id,
+                            tableId: "authority-table"
+                        });
+                    }
+                }},
+            {text:"详情", iconCls:"glyphicon glyphicon-file",
+                handler:function(){
+                    var rows = $("#authority-table").bootstrapTable('getSelections');
+                    if(rows.length==0){
+                        Lobibox.alert('info', {title: "提示", msg: "请先选中要查看的记录"});
+                    }
+                    else{
+                        utils.dialog({
+                            id: "authority-dialog",
+                            title: "详情",
+                            url: "/pages/authority/detail.html",
+                            data: rows[0]
+                        });
+                    }
+                }}
+        ]});
+});
+</script>
+<div class="panel panel-default">
+    <div class="panel-body">
+        <form id="authority-searchForm" class="searchform">
+            <div><input class="form-control" type="text" name="name" placeholder="名称"/></div>
+            <div><input class="form-control" type="text" name="code" placeholder="代码"/></div>
+        </form>
+    </div>
+</div>
+<table id="authority-table"></table>

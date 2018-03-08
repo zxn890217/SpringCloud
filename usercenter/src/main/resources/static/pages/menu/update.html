@@ -1,25 +1,14 @@
 <!DOCTYPE html>
 <script>
     $(function(){
-        utils.ajax({
-            url: "/menu/query",
-            data: {type: '1'},
-            async: false,
-            success: function(r){
-                var select = $("#menu-form select[name='pid']");
-                $.each(r, function (i, n) {
-                    select.append('<option value="'+n.id+'">'+n.name+'</option>');
-                });
-                var options = BootstrapDialog.getDialog("menu-dialog").options;
-                if(options.data && options.data.pid){
-                    select.val(options.data.pid);
-                }
-            }
-        });
         var data = BootstrapDialog.getDialog("menu-dialog").options.data;
-        $("#menu-form").bootstrapForm("load", {url: "/menu/detail", data: {id: data.id}});
+        $("#menu-form").bootstrapForm("load", {url: "/menu/"+data.id});
         $("#menu-form").bootstrapForm("validForm", {
-            url: "/menu/update",
+            ajaxOpts:{
+                url: "/menu/"+data.id,
+                type: "PUT",
+                contentType:"application/json"
+            },
             dialogId: "menu-dialog",
             submitBtnId: "menu-editBtn",
             fields: {
@@ -34,28 +23,12 @@
                         integer: {message: '排序为数字'}
                     }
                 },
-                url: {
-                    validators: {
-                        callback: {
-                            message: "URL不能为空",
-                            callback: function(fieldValue, validator){
-                                var pid = $("#menu-form").find("select[name='pid']").val();
-                                if(pid){
-                                    if(fieldValue==""){
-                                        return false;
-                                    }
-                                }
-                                return true;
-                            }
-                        }
-                    }
-                },
                 iconClass: {
                     validators: {
                         callback: {
                             message: "图标类型不能为空",
                             callback: function(fieldValue, validator){
-                                var pid = $("#menu-form").find("select[name='pid']").val();
+                                var pid = $("#menu-form").find("select[name='parent.id']").val();
                                 var visable = $("#menu-form").find("select[name='visable']").val();
                                 if(!pid && visable=='1'){
                                     if(fieldValue==""){
@@ -79,7 +52,6 @@
 </script>
 <form id="menu-form" class="form-horizontal">
     <input type="hidden" name="id"/>
-    <input type="hidden" name="_method" value="put"/><!--restful api put method-->
     <div class="form-group">
         <label class="col-lg-3 control-label">名称</label>
         <div class="col-lg-5">
@@ -99,17 +71,29 @@
         </div>
     </div>
     <div class="form-group">
+        <label class="col-lg-3 control-label">所属系统</label>
+        <div class="col-lg-5">
+            <input type="text" class="form-control" name="fromType" maxlength="20"/>
+        </div>
+    </div>
+    <div class="form-group">
         <label class="col-lg-3 control-label">父级菜单</label>
         <div class="col-lg-5">
-            <select type="text" class="form-control" name="pid">
-                <option value="">请选择</option>
-            </select>
+            <input type="hidden" name="parent.id"/>
+            <input type="text" name="parent.name" class="form-control" readonly/>
+        </div>
+        <div class="col-lg-2">
+            <button type="button" id="menu-parent-clear-btn" class="btn btn-default">清除</button>
         </div>
     </div>
     <div class="form-group">
         <label class="col-lg-3 control-label">权限代码</label>
         <div class="col-lg-5">
-            <input type="text" class="form-control" name="authc" maxlength="30"/>
+            <input type="hidden" name="authority.id"/>
+            <input type="text" class="form-control" name="authority.code"/>
+        </div>
+        <div class="col-lg-2">
+            <button type="button" id="menu-authority-clear-btn" class="btn btn-default">清除</button>
         </div>
     </div>
     <div class="form-group">
@@ -120,16 +104,17 @@
     </div>
     <div class="form-group">
         <label class="col-lg-3 control-label">状态</label>
-        <div class="col-lg-5">
+        <div class="col-lg-5 radio">
             <label><input type="radio" name="state" value="1"/>启用</label>
             <label><input type="radio" name="state" value="0"/>禁用</label>
         </div>
     </div>
     <div class="form-group">
         <label class="col-lg-3 control-label">可视</label>
-        <div class="col-lg-5">
+        <div class="col-lg-5 radio">
             <label><input type="radio" name="visable" value="1"/>是</label>
             <label><input type="radio" name="visable" value="0"/>否</label>
         </div>
     </div>
 </form>
+

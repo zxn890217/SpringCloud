@@ -55,9 +55,15 @@ public abstract class BaseRestController<T, Q extends QueryBase> {
         }
         return new RespBody(false, "删除失败");
     }
+    @PostMapping(value="/page")
+    @ResponseBody
+    public Page<T> page(Q query){
+        return getService().findByPage(query);
+    }
+
     @GetMapping(value="")
     @ResponseBody
-    public Page<T> page(Q queryModel){
-        return getService().findByPage(queryModel);
+    public List<T> query(Q query){
+        return getService().query(query);
     }
 }

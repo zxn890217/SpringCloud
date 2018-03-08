@@ -8,7 +8,7 @@ import com.example.domain.base.QueryBase;
 public class QResource extends QueryBase {
     //资源ID
     private Long id;
-    //类型（1：资源路径；2：资源路径正则表达式；3：无权限控制路径）
+    //类型（1：一般资源路径；2：无权限控制路径；3：登录权限控制路径；）
     private Integer type;
     //资源内容
     private String content;

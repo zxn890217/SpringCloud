@@ -1,27 +1,22 @@
 <!DOCTYPE html>
 <script>
     $(function(){
-        $("#resource-form").bootstrapForm("validForm", {
+        var data = BootstrapDialog.getDialog("authority-dialog").options.data;
+        $("#authority-form").bootstrapForm("load", {url: "/authority/"+data.id});
+        $("#authority-form").bootstrapForm("validForm", {
             ajaxOpts:{
-                url: "/resource",
+                url: "/authority/"+data.id,
+                type: "PUT",
                 contentType:"application/json"
             },
-            dialogId: "resource-dialog",
-            tableId: "resource-table",
-            submitBtnId: "resource-saveBtn",
-            fields: {
-                name: {
-                    validators: {
-                        notEmpty: {message: '角色名称不能为空'}
-                    }
-                }
-            }
+            dialogId: "authority-dialog",
+            tableId: "authority-table",
+            submitBtnId: "authority-editBtn"
         });
     });
 </script>
-<form id="resource-form" class="form-horizontal">
-    <input type="hidden" name="id"/>
-    <input type="hidden" name="_method" value="put"/><!--restful api put method-->
+<form id="authority-form" class="form-horizontal">
+    <input type="hidden" name="id">
     <div class="form-group">
         <label class="col-lg-3 control-label">类型</label>
         <div class="col-lg-5">
@@ -41,7 +36,7 @@
     <div class="form-group">
         <label class="col-lg-3 control-label">可用状态</label>
         <div class="col-lg-5 radio">
-            <label><input type="radio" name="enable" value="true" checked/>启用</label>
+            <label><input type="radio" name="enable" value="true"/>启用</label>
             <label><input type="radio" name="enable" value="false"/>禁用</label>
         </div>
     </div>

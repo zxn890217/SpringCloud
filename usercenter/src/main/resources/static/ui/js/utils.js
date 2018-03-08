@@ -63,7 +63,7 @@ utils.ajax = function(options){
 
 utils.bootstrapTable = function(options){
     var configs = {
-        method: "GET",
+        method: "POST",
         contentType: "application/x-www-form-urlencoded",
         sidePagination: "server",
         showRefresh: true,
@@ -207,7 +207,7 @@ utils.deleteAjax = function(options){
     var configs = {
         title: '确认',
         msg: '是否删除？',
-        type: "post",
+        type: "DELETE",
         dataType: "json",
         success: function(r){
             if(r.success){
@@ -225,9 +225,6 @@ utils.deleteAjax = function(options){
         }
     };
     options = $.extend(configs, options || {});
-    if(!options.data)
-        options.data = {};
-    options.data._method="DELETE";
     Lobibox.confirm({
         title: options.title,
         msg: options.msg,

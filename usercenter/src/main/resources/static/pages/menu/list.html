@@ -5,110 +5,110 @@
 <script src="/plugins/jquery-treegrid/js/jquery.treegrid.extension.js"></script>
 <script>
 $(function(){
-$('#menu-table').treegridData({
-    treeColumn:1,
-    initialState:'collapsed',//expanded
-    singleSelect:true,
-    id: 'id',
-    parentColumn: 'parent.id',
-    type: "GET",
-    url: "/menu/query",
-    ajaxParams: {}, //请求数据的ajax的data属性
-    expandColumn: null,//在哪一列上面显示展开按钮
-    //striped: true,   //是否各行渐变色
-    bordered: true,  //是否显示边框
-    //expandAll: false,  //是否全部展开
-    columns: [
-        {field:'id', title:'主键', checkbox:true},
-        {field:'name', title:'名称'},
-        {field:'url', title:'URL'}, 
-        {field:'seq', title:'排序'},
-        {field:'fromType', title:'所属系统'},
-        {field:'authority', title:'权限', formatter: function (value) {
-            if(value){
-                return value.name+"（"+value.code+"）";
-            }
-        }},
-        {field:'iconClass', title:'图标样式类型'},
-        {field:'state', title:'状态', formatter: function(value){
-            if(value == '1')
-                return '可用';
-            return '禁用';
-        }},
-        {field:'visable', title:'可视', formatter: function(value){
-            if(value == '1')
-                return '是';
-            return '否';
-        }}
-    ],
-    buttons: [
-        {text:"添加", iconCls:"glyphicon glyphicon-plus",
-            handler:function(){
-                var opts = {
-                    id: "menu-dialog",
-                    title: "添加",
-                    url: "/pages/menu/add.html",
-                    buttons: [{label: "保存", id: "menu-saveBtn"}]
-                }
-                var rows = $("#menu-table").treegridData("getSelections");
-                if(rows.length>0){
-                    opts.data = rows[0];
-                }
-                utils.dialog(opts);
-            }},
-        {text:"修改", iconCls:"glyphicon glyphicon-pencil",
-            handler:function(){
-                var rows = $("#menu-table").treegridData("getSelections");
-                if(rows.length!=1){
-                    Lobibox.alert('info', {title: "提示", msg: "请选定一行数据"});
-                }
-                else{
-                    utils.dialog({
-                        id: "menu-dialog",
-                        title: "修改",
-                        url: "/pages/menu/update.html",
-                        buttons: [{label: "修改", id: "menu-editBtn"}],
-                        data: rows[0]
-                    });
+    $('#menu-table').treegridData({
+        treeColumn:1,
+        initialState:'collapsed',//expanded
+        singleSelect:true,
+        id: 'id',
+        parentColumn: 'parent.id',
+        type: "GET",
+        url: "/menu/query",
+        ajaxParams: {}, //请求数据的ajax的data属性
+        expandColumn: null,//在哪一列上面显示展开按钮
+        //striped: true,   //是否各行渐变色
+        bordered: true,  //是否显示边框
+        //expandAll: false,  //是否全部展开
+        columns: [
+            {field:'id', title:'主键', checkbox:true},
+            {field:'name', title:'名称'},
+            {field:'url', title:'URL'},
+            {field:'seq', title:'排序'},
+            {field:'fromType', title:'所属系统'},
+            {field:'authority', title:'权限', formatter: function (value) {
+                if(value){
+                    return value.name+"（"+value.code+"）";
                 }
             }},
-        {text:"删除", iconCls:"glyphicon glyphicon-remove",
-            handler:function(){
-                var rows = $("#menu-table").treegridData("getSelections");
-                if(rows.length==0){
-                    Lobibox.alert('info', {title: "提示", msg: "请先选中要删除的记录"});
-                }
-                else{
-                    utils.deleteAjax({
-                        url:"/menu/"+rows[0].id,
-                        success: function(r){
-                            if(r.success){
-                                Lobibox.notify('info', {size: 'mini', title: '提示', msg: r.msg});
-                            }
-                            else{
-                                Lobibox.notify('warning', {size: 'mini', title: '失败', msg: r.msg});
-                            }
-                            $('#menu-table').treegridData('reload');
-                        }
-                    });
-                }
+            {field:'iconClass', title:'图标样式类型'},
+            {field:'state', title:'状态', formatter: function(value){
+                if(value == '1')
+                    return '可用';
+                return '禁用';
             }},
-        {text:"详情", iconCls:"glyphicon glyphicon-file",
-            handler:function(){
-                var rows = $("#menu-table").treegridData("getSelections");
-                if(rows.length==0){
-                    Lobibox.alert('info', {title: "提示", msg: "请先选中要查看的记录"});
-                }
-                else{
-                    utils.dialog({
-                        id: "menu-dialog",
-                        title: "详情",
-                        url: "/pages/menu/detail.html",
-                        data: {id: rows[0].id}
-                    });
-                }
+            {field:'visable', title:'可视', formatter: function(value){
+                if(value == '1')
+                    return '是';
+                return '否';
             }}
-    ]});
+        ],
+        buttons: [
+            {text:"添加", iconCls:"glyphicon glyphicon-plus",
+                handler:function(){
+                    var opts = {
+                        id: "menu-dialog",
+                        title: "添加",
+                        url: "/pages/menu/add.html",
+                        buttons: [{label: "保存", id: "menu-saveBtn"}]
+                    }
+                    var rows = $("#menu-table").treegridData("getSelections");
+                    if(rows.length>0){
+                        opts.data = rows[0];
+                    }
+                    utils.dialog(opts);
+                }},
+            {text:"修改", iconCls:"glyphicon glyphicon-pencil",
+                handler:function(){
+                    var rows = $("#menu-table").treegridData("getSelections");
+                    if(rows.length!=1){
+                        Lobibox.alert('info', {title: "提示", msg: "请选定一行数据"});
+                    }
+                    else{
+                        utils.dialog({
+                            id: "menu-dialog",
+                            title: "修改",
+                            url: "/pages/menu/update.html",
+                            buttons: [{label: "修改", id: "menu-editBtn"}],
+                            data: rows[0]
+                        });
+                    }
+                }},
+            {text:"删除", iconCls:"glyphicon glyphicon-remove",
+                handler:function(){
+                    var rows = $("#menu-table").treegridData("getSelections");
+                    if(rows.length==0){
+                        Lobibox.alert('info', {title: "提示", msg: "请先选中要删除的记录"});
+                    }
+                    else{
+                        utils.deleteAjax({
+                            url:"/menu/"+rows[0].id,
+                            success: function(r){
+                                if(r.success){
+                                    Lobibox.notify('info', {size: 'mini', title: '提示', msg: r.msg});
+                                }
+                                else{
+                                    Lobibox.notify('warning', {size: 'mini', title: '失败', msg: r.msg});
+                                }
+                                $('#menu-table').treegridData('reload');
+                            }
+                        });
+                    }
+                }},
+            {text:"详情", iconCls:"glyphicon glyphicon-file",
+                handler:function(){
+                    var rows = $("#menu-table").treegridData("getSelections");
+                    if(rows.length==0){
+                        Lobibox.alert('info', {title: "提示", msg: "请先选中要查看的记录"});
+                    }
+                    else{
+                        utils.dialog({
+                            id: "menu-dialog",
+                            title: "详情",
+                            url: "/pages/menu/detail.html",
+                            data: {id: rows[0].id}
+                        });
+                    }
+                }}
+        ]});
 });
 </script>
 <table id="menu-table"></table>

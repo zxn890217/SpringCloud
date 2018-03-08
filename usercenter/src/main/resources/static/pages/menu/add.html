@@ -30,7 +30,7 @@
                         callback: {
                             message: "图标类型不能为空",
                             callback: function(fieldValue, validator){
-                                var pid = $("#menu-form").find("select[name='pid']").val();
+                                var pid = $("#menu-form").find("select[name='parent.id']").val();
                                 var visable = $("#menu-form").find("select[name='visable']").val();
                                 if(!pid && visable=='1'){
                                     if(fieldValue==""){
@@ -142,14 +142,14 @@
     </div>
     <div class="form-group">
         <label class="col-lg-3 control-label">状态</label>
-        <div class="col-lg-5">
+        <div class="col-lg-5 radio">
             <label><input type="radio" name="state" value="1" checked/>启用</label>
             <label><input type="radio" name="state" value="0"/>禁用</label>
         </div>
     </div>
     <div class="form-group">
         <label class="col-lg-3 control-label">可视</label>
-        <div class="col-lg-5">
+        <div class="col-lg-5 radio">
             <label><input type="radio" name="visable" value="1" checked/>是</label>
             <label><input type="radio" name="visable" value="0"/>否</label>
         </div>

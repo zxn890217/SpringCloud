@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<script>
+$(function(){
+    utils.bootstrapTable({
+        id: "resource-table",
+        url: "/resource/page",
+        singleSelect: true,
+        pagination: true,
+        searchForm: 'resource-searchForm',
+        columns: [
+            {field:'check', checkbox:true},
+            {field:'id', title:'资源ID', visible:false},
+            {field:'content', title:'内容'},
+            {field:'type', title:'类型', formatter:function(value){
+                switch(value){
+                    case 1: return "一般资源路径";
+                    case 2: return "无权限控制路径";
+                    case 3: return "登录权限控制路径";
+                }
+                return '禁用';
+            }},
+            {field:'enable', title:'可用状态', formatter:function(value){
+                if(value){
+                    return "可用";
+                }
+                return "禁用";
+            }}
+        ],
+        buttons: [
+            {text:"添加", iconCls:"glyphicon glyphicon-plus",
+                handler:function(){
+                    utils.dialog({
+                        id: "resource-dialog",
+                        title: "添加",
+                        url: "/pages/resource/add.html",
+                        buttons: [{label: "保存", id: "resource-saveBtn"}]
+                    });
+                }},
+            {text:"修改", iconCls:"glyphicon glyphicon-pencil",
+                handler:function(){
+                    var rows = $("#resource-table").bootstrapTable("getSelections");
+                    if(rows.length!=1){
+                        Lobibox.alert('info', {title: "提示", msg: "请选定一行数据"});
+                    }
+                    else{
+                        utils.dialog({
+                            id: "resource-dialog",
+                            title: "修改",
+                            url: "/pages/resource/update.html",
+                            buttons: [{label: "修改", id: "resource-editBtn"}],
+                            data: rows[0]
+                        });
+                    }
+                }},
+            {text:"删除", iconCls:"glyphicon glyphicon-remove",
+                handler:function(){
+                    var rows = $("#resource-table").bootstrapTable('getSelections');
+                    if(rows.length==0){
+                        Lobibox.alert('info', {title: "提示", msg: "请先选中要删除的记录"});
+                    }
+                    else{
+                        utils.deleteAjax({
+                            url: "/resource/"+rows[0].id,
+                            tableId: "resource-table"
+                        });
+                    }
+                }},
+            {text:"详情", iconCls:"glyphicon glyphicon-file",
+                handler:function(){
+                    var rows = $("#resource-table").bootstrapTable('getSelections');
+                    if(rows.length==0){
+                        Lobibox.alert('info', {title: "提示", msg: "请先选中要查看的记录"});
+                    }
+                    else{
+                        utils.dialog({
+                            id: "resource-dialog",
+                            title: "详情",
+                            url: "/pages/resource/detail.html",
+                            data: rows[0]
+                        });
+                    }
+                }}
+        ]});
+});
+</script>
+<div class="panel panel-default">
+    <div class="panel-body">
+        <form id="resource-searchForm" class="searchform">
+            <div><input class="form-control" type="text" name="name" placeholder="内容"/></div>
+            <div>
+                <select name="type" class="form-control">
+                    <option value="">--类型--</option>
+                    <option value="1">一般资源路径</option>
+                    <option value="2">无权限控制路径</option>
+                    <option value="3">登录权限控制路径</option>
+                </select>
+            </div>
+            <div>
+                <select name="enable" class="form-control">
+                    <option value="">--可用状态--</option>
+                    <option value="true">可用</option>
+                    <option value="false">禁用</option>
+                </select>
+            </div>
+        </form>
+    </div>
+</div>
+<table id="resource-table"></table>
