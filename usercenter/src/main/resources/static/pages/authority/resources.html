@@ -2,11 +2,11 @@
 <script>
     $(function(){
         utils.bootstrapTable({
-            id: "authority-resources-table",
-            url: "/resource/page?type=1",
+            id: "resources-table",
+            url: "/resource/page",
             singleSelect: false,
             pagination: true,
-            searchForm: 'resource-searchForm',
+            searchForm: 'resources-searchForm',
             columns: [
                 {field:'check', checkbox:true},
                 {field:'id', title:'资源ID', visible:false},
@@ -17,29 +17,31 @@
                     }
                     return "禁用";
                 }}
-            ]});
+            ],
+            buttons: [
+                {text:"添加", iconCls:"glyphicon glyphicon-plus",
+                    handler:function(){
+                        var rows = $("#resources-table").bootstrapTable("getSelections");
+                        if(rows==null || rows.length==0){
+                            Lobibox.alert('info', {title: "提示", msg: "请先勾选要添加的资源数据！"});
+                        }
+                        else{
+                            var arr = $.extend(true,[],rows);
+                            var dialog = BootstrapDialog.getDialog("authority-resource-dialog");
+                            dialog.options.data.callback(arr);
+                            dialog.close();
+                        }
+                    }
+                }
+            ]
+        });
     });
 </script>
 <div class="panel panel-default">
     <div class="panel-body">
-        <form id="resource-searchForm" class="searchform">
-            <div><input class="form-control" type="text" name="name" placeholder="内容"/></div>
-            <div>
-                <select name="type" class="form-control">
-                    <option value="">--类型--</option>
-                    <option value="1">一般资源路径</option>
-                    <option value="2">无权限控制路径</option>
-                    <option value="3">登录权限控制路径</option>
-                </select>
-            </div>
-            <div>
-                <select name="enable" class="form-control">
-                    <option value="">--可用状态--</option>
-                    <option value="true">可用</option>
-                    <option value="false">禁用</option>
-                </select>
-            </div>
+        <form id="resources-searchForm" class="searchform">
+            <div><input class="form-control" type="text" name="content" placeholder="内容"/></div>
         </form>
     </div>
 </div>
-<table id="authority-resources-table"></table>
+<table id="resources-table"></table>

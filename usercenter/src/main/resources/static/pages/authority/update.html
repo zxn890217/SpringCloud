@@ -2,42 +2,138 @@
 <script>
     $(function(){
         var data = BootstrapDialog.getDialog("authority-dialog").options.data;
-        $("#authority-form").bootstrapForm("load", {url: "/authority/"+data.id});
+        $("#authority-form").bootstrapForm("loadData", data);
         $("#authority-form").bootstrapForm("validForm", {
-            ajaxOpts:{
-                url: "/authority/"+data.id,
-                type: "PUT",
-                contentType:"application/json"
-            },
             dialogId: "authority-dialog",
             tableId: "authority-table",
-            submitBtnId: "authority-editBtn"
+            submitBtnId: "authority-editBtn",
+            fields: {
+                name: {
+                    validators: {
+                        notEmpty: {message: '名称不能为空'}
+                    }
+                },
+                code: {
+                    validators: {
+                        notEmpty: {message: '代码不能为空'}
+                    }
+                }
+            },
+            submitAjax: function(jq){
+                var data = jq.serializeJson();
+                var id = data.id;
+                data.resources = $("#authority-resource-table").bootstrapTable("getData");
+                data = JSON.stringify(data);
+                $.ajax({
+                    url: "/authority/"+id,
+                    contentType:"application/json",
+                    type: "PUT",
+                    dataType: "json",
+                    data: data,
+                    success:function(r){
+                        if(r){
+                            if(r.success){
+                                BootstrapDialog.getDialog("authority-dialog").close();
+                                $("#authority-table").bootstrapTable("refresh");
+                                Lobibox.notify('info', {size: 'mini',title: '提示',msg: r.msg});
+                            }
+                            else{
+                                Lobibox.alert('error', {title: '失败',msg: r.msg});
+                            }
+                        }
+                        else{
+                            Lobibox.alert('error', {title: '错误',msg: '无返回值'});
+                        }
+                        $("#authority-editBtn").removeAttr("disabled");
+                    },
+                    error:function(){
+                        Lobibox.notify('error', {width: $(window).width(),msg: '表单提交失败'});
+                        $("#authority-editBtn").removeAttr("disabled");
+                    }
+                });
+            }
+        });
+        utils.bootstrapTable({
+            id: "authority-resource-table",
+            singleSelect: false,
+            showRefresh: false,
+            showToggle: false,
+            data: data.resources,
+            uniqueId: 'id',
+            columns: [
+                {field: 'check', checkbox: true},
+                {field:'content', title:'内容'},
+                {field:'type', title:'类型', formatter:function(value){
+                    switch(value){
+                        case 1: return "一般资源路径";
+                        case 2: return "无权限控制路径";
+                        case 3: return "登录权限控制路径";
+                    }
+                    return '禁用';
+                }},
+                {field:'enable', title:'可用状态', formatter:function(value){
+                    if(value){
+                        return "可用";
+                    }
+                    return "禁用";
+                }}
+            ]
+        });
+
+        $("#authority-resource-table-del").on("click", function(){
+            var rows = $("#authority-resource-table").bootstrapTable('getSelections');
+            var ids = $.map(rows, function (row) {
+                return row.id;
+            });
+            $("#authority-resource-table").bootstrapTable('remove', {
+                field: 'id',
+                values: ids
+            });
+            var data = $("#authority-resource-table").bootstrapTable('getData');
+            var arr = $.extend(true,[],data);
+            $("#authority-resource-table").bootstrapTable('load', arr);
+        });
+
+        $("#authority-resource-table-add").on("click", function(){
+            utils.dialog({
+                id: "authority-resource-dialog",
+                title: "添加资源",
+                url: "/pages/authority/resources.html",
+                closable: true,
+                data: {
+                    callback: function(rows){
+                        $("#authority-resource-table").bootstrapTable('append', rows);
+                    }}
+            });
         });
     });
 </script>
-<form id="authority-form" class="form-horizontal">
+<form id="authority-form" class="form-horizontal" method="POST">
     <input type="hidden" name="id">
     <div class="form-group">
-        <label class="col-lg-3 control-label">类型</label>
+        <label class="col-lg-3 control-label">名称</label>
         <div class="col-lg-5">
-            <select name="type" class="form-control">
-                <option value="1">一般资源路径</option>
-                <option value="2">无权限控制路径</option>
-                <option value="3">登录权限控制路径</option>
-            </select>
+            <input type="text" name="name" class="form-control">
         </div>
     </div>
     <div class="form-group">
-        <label class="col-lg-3 control-label">内容</label>
+        <label class="col-lg-3 control-label">代码</label>
         <div class="col-lg-5">
-            <input type="text" name="content" class="form-control">
-        </div>
-    </div>
-    <div class="form-group">
-        <label class="col-lg-3 control-label">可用状态</label>
-        <div class="col-lg-5 radio">
-            <label><input type="radio" name="enable" value="true"/>启用</label>
-            <label><input type="radio" name="enable" value="false"/>禁用</label>
+            <input type="text" name="code" class="form-control">
         </div>
     </div>
 </form>
+<div class="row">
+    <div class="col-lg-12">
+        <div>
+            <div class="pull-left"><h4>资源列表</h4></div>
+            <div class="btn-group pull-right">
+                <button id="authority-resource-table-add" class="btn btn-default"><span class="glyphicon glyphicon-plus"></span>添加</button>
+                <button id="authority-resource-table-del" class="btn btn-default"><span class="glyphicon glyphicon-remove"></span>删除</button>
+            </div>
+        </div>
+        <div>
+            <table id="authority-resource-table"></table>
+        </div>
+    </div>
+</div>

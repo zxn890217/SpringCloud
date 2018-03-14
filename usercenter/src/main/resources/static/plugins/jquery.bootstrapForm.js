@@ -121,7 +121,6 @@
                         }
                     };
                     ajaxOpts = $.extend(ajaxOpts, options.ajaxOpts||{});
-                    console.log(ajaxOpts);
                     if(ajaxOpts.contentType=="application/json"){
                         ajaxOpts.data=JSON.stringify(jq.serializeJson());
                     }
