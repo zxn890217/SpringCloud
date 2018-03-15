@@ -1,48 +1,101 @@
 <!DOCTYPE html>
+<link rel="stylesheet" href="/plugins/zTree_v3/css/metroStyle/metroStyle.css"/>
+<script src="/plugins/zTree_v3/js/jquery.ztree.all.js"></script>
 <script>
     $(function(){
-        $("#resource-form").bootstrapForm("validForm", {
+        var dialogData = BootstrapDialog.getDialog("role-dialog").options.data;
+        $("#role-form").bootstrapForm("loadData", dialogData);
+
+        $("#role-form").bootstrapForm("validForm", {
             ajaxOpts:{
-                url: "/resource",
-                contentType:"application/json"
+                url: "/role/"+dialogData.id,
+                contentType:"application/json",
+                type: "PUT"
             },
-            dialogId: "resource-dialog",
-            tableId: "resource-table",
-            submitBtnId: "resource-saveBtn",
+            dialogId: "role-dialog",
+            tableId: "role-table",
+            submitBtnId: "role-editBtn",
             fields: {
                 name: {
                     validators: {
                         notEmpty: {message: '角色名称不能为空'}
                     }
                 }
+            },
+            extendParams: function(jq){
+                var authorities = $("#role-authority-table").bootstrapTable('getData');
+                return {"authorities": authorities};
             }
+        });
+        utils.bootstrapTable({
+            id: "role-authority-table",
+            singleSelect: false,
+            showRefresh: false,
+            showToggle: false,
+            uniqueId: 'id',
+            data: dialogData.authorities,
+            columns: [
+                {field: 'check', checkbox: true},
+                {field:'name', title:'名称'},
+                {field:'code', title:'代码'}
+            ]
+        });
+
+        $("#role-authority-table-del").on("click", function(){
+            var rows = $("#role-authority-table").bootstrapTable('getSelections');
+            var ids = $.map(rows, function (row) {
+                return row.id;
+            });
+            $("#role-authority-table").bootstrapTable('remove', {
+                field: 'id',
+                values: ids
+            });
+            var data = $("#role-authority-table").bootstrapTable('getData');
+            var arr = $.extend(true,[],data);
+            $("#role-authority-table").bootstrapTable('load', arr);
+        });
+
+        $("#role-authority-table-add").on("click", function(){
+            utils.dialog({
+                id: "role-authority-dialog",
+                title: "添加权限",
+                url: "/pages/role/authorities.html",
+                closable: true,
+                data: {
+                    callback: function(rows){
+                        var arr = [];
+                        $.each(rows, function(i,n){
+                            var row = $("#role-authority-table").bootstrapTable('getRowByUniqueId', n.id);
+                            if(row==null){
+                                arr.push(n);
+                            }
+                        });
+                        $("#role-authority-table").bootstrapTable('append', arr);
+                    }}
+            });
         });
     });
 </script>
-<form id="resource-form" class="form-horizontal">
-    <input type="hidden" name="id"/>
-    <input type="hidden" name="_method" value="put"/><!--restful api put method-->
+<form id="role-form" class="form-horizontal">
+    <input type="hidden" name="id">
     <div class="form-group">
-        <label class="col-lg-3 control-label">类型</label>
+        <label class="col-lg-3 control-label">角色名称</label>
         <div class="col-lg-5">
-            <select name="type" class="form-control">
-                <option value="1">一般资源路径</option>
-                <option value="2">无权限控制路径</option>
-                <option value="3">登录权限控制路径</option>
-            </select>
-        </div>
-    </div>
-    <div class="form-group">
-        <label class="col-lg-3 control-label">内容</label>
-        <div class="col-lg-5">
-            <input type="text" name="content" class="form-control">
-        </div>
-    </div>
-    <div class="form-group">
-        <label class="col-lg-3 control-label">可用状态</label>
-        <div class="col-lg-5 radio">
-            <label><input type="radio" name="enable" value="true" checked/>启用</label>
-            <label><input type="radio" name="enable" value="false"/>禁用</label>
+            <input type="text" class="form-control" name="name" maxlength="32"/>
         </div>
     </div>
 </form>
+<div class="row">
+    <div class="col-lg-12">
+        <div>
+            <div class="pull-left"><h4>权限列表</h4></div>
+            <div class="btn-group pull-right">
+                <button id="role-authority-table-add" class="btn btn-default"><span class="glyphicon glyphicon-plus"></span>添加</button>
+                <button id="role-authority-table-del" class="btn btn-default"><span class="glyphicon glyphicon-remove"></span>删除</button>
+            </div>
+        </div>
+        <div>
+            <table id="role-authority-table"></table>
+        </div>
+    </div>
+</div>

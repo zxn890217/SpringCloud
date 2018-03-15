@@ -39,19 +39,6 @@ $(function(){
                         });
                     }
                 }},
-            {text:"删除", iconCls:"glyphicon glyphicon-remove",
-                handler:function(){
-                    var rows = $("#authority-table").bootstrapTable('getSelections');
-                    if(rows.length==0){
-                        Lobibox.alert('info', {title: "提示", msg: "请先选中要删除的记录"});
-                    }
-                    else{
-                        utils.deleteAjax({
-                            url: "/authority/"+rows[0].id,
-                            tableId: "authority-table"
-                        });
-                    }
-                }},
             {text:"详情", iconCls:"glyphicon glyphicon-file",
                 handler:function(){
                     var rows = $("#authority-table").bootstrapTable('getSelections');
@@ -64,6 +51,19 @@ $(function(){
                             title: "详情",
                             url: "/pages/authority/detail.html",
                             data: rows[0]
+                        });
+                    }
+                }},
+            {text:"删除", iconCls:"glyphicon glyphicon-remove",
+                handler:function(){
+                    var rows = $("#authority-table").bootstrapTable('getSelections');
+                    if(rows.length==0){
+                        Lobibox.alert('info', {title: "提示", msg: "请先选中要删除的记录"});
+                    }
+                    else{
+                        utils.deleteAjax({
+                            url: "/authority/"+rows[0].id,
+                            tableId: "authority-table"
                         });
                     }
                 }}

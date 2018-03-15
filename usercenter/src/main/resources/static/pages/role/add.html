@@ -1,19 +1,11 @@
 <!DOCTYPE html>
 <script>
     $(function(){
-        utils.ajax({
-            url: "/menu/query",
-            data: {type: '2'},
-            async: false,
-            success: function(r){
-                var container = $("#menus-container");
-                $.each(r, function (i, n) {
-                    container.append('<div><label><input type="checkbox" value="'+n.menuId+'">'+n.name+'</label></div>');
-                });
-            }
-        });
         $("#role-form").bootstrapForm("validForm", {
-            url: "/role/add",
+            ajaxOpts:{
+                url: "/role",
+                contentType:"application/json"
+            },
             dialogId: "role-dialog",
             tableId: "role-table",
             submitBtnId: "role-saveBtn",
@@ -24,12 +16,57 @@
                     }
                 }
             },
-            beforeSubmit: function(form){
-                form.find("input[name^='menus']").remove();
-                $("#menus-container :checked").each(function(i, e){
-                    form.append('<input type="hidden" name="menus['+i+'].menuId" value="'+$(e).val()+'"/>');
-                });
+            extendParams: function(jq){
+                var authorities = $("#role-authority-table").bootstrapTable('getData');
+                return {"authorities": authorities};
             }
+        });
+
+        utils.bootstrapTable({
+            id: "role-authority-table",
+            singleSelect: false,
+            showRefresh: false,
+            showToggle: false,
+            uniqueId: 'id',
+            columns: [
+                {field: 'check', checkbox: true},
+                {field:'name', title:'名称'},
+                {field:'code', title:'代码'}
+            ]
+        });
+
+        $("#role-authority-table-del").on("click", function(){
+            var rows = $("#role-authority-table").bootstrapTable('getSelections');
+            var ids = $.map(rows, function (row) {
+                return row.id;
+            });
+            $("#role-authority-table").bootstrapTable('remove', {
+                field: 'id',
+                values: ids
+            });
+            var data = $("#role-authority-table").bootstrapTable('getData');
+            var arr = $.extend(true,[],data);
+            $("#role-authority-table").bootstrapTable('load', arr);
+        });
+
+        $("#role-authority-table-add").on("click", function(){
+            utils.dialog({
+                id: "role-authority-dialog",
+                title: "添加权限",
+                url: "/pages/role/authorities.html",
+                closable: true,
+                data: {
+                    callback: function(rows){
+                        var arr = [];
+                        $.each(rows, function(i,n){
+                            var row = $("#role-authority-table").bootstrapTable('getRowByUniqueId', n.id);
+                            if(row==null){
+                                arr.push(n);
+                            }
+                        });
+                        $("#role-authority-table").bootstrapTable('append', arr);
+                    }}
+            });
         });
     });
 </script>
@@ -40,17 +77,18 @@
             <input type="text" class="form-control" name="name" maxlength="32"/>
         </div>
     </div>
-    <div class="form-group">
-        <label class="col-lg-3 control-label">状态</label>
-        <div class="col-lg-5">
-            <label><input type="radio" name="state" value="1" checked/>启用</label>
-            <label><input type="radio" name="state" value="0"/>禁用</label>
-        </div>
-    </div>
-    <div class="form-group">
-        <label class="col-lg-3 control-label">菜单</label>
-        <div class="col-lg-5">
-            <div id="menus-container"  style="border: 1px solid lightgrey; padding: 3px; max-height: 200px;"></div>
-        </div>
-    </div>
 </form>
+<div class="row">
+    <div class="col-lg-12">
+        <div>
+            <div class="pull-left"><h4>权限列表</h4></div>
+            <div class="btn-group pull-right">
+                <button id="role-authority-table-add" class="btn btn-default"><span class="glyphicon glyphicon-plus"></span>添加</button>
+                <button id="role-authority-table-del" class="btn btn-default"><span class="glyphicon glyphicon-remove"></span>删除</button>
+            </div>
+        </div>
+        <div>
+            <table id="role-authority-table"></table>
+        </div>
+    </div>
+</div>

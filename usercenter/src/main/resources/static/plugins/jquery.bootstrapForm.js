@@ -57,8 +57,12 @@
                 fields: options.fields
             }).on('success.form.bv', function(e) {
                 e.preventDefault();
+                var extendParams = null;
                 if(options.beforeSubmit){
                     options.beforeSubmit(jq);
+                }
+                if(options.extendParams){
+                    extendParams = options.extendParams(jq);
                 }
                 if(options.submitAjax){
                     return options.submitAjax(jq);
@@ -121,11 +125,15 @@
                         }
                     };
                     ajaxOpts = $.extend(ajaxOpts, options.ajaxOpts||{});
+                    var data = jq.serializeJson();
+                    if(extendParams){
+                        data = $.extend(data, extendParams);
+                    }
                     if(ajaxOpts.contentType=="application/json"){
-                        ajaxOpts.data=JSON.stringify(jq.serializeJson());
+                        ajaxOpts.data=JSON.stringify(data);
                     }
                     else{
-                        ajaxOpts.data=jq.serializeJson();
+                        ajaxOpts.data=data;
                     }
                     $.ajax(ajaxOpts);
                 }

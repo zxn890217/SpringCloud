@@ -23,7 +23,7 @@
                     handler:function(){
                         var rows = $("#resources-table").bootstrapTable("getSelections");
                         if(rows==null || rows.length==0){
-                            Lobibox.alert('info', {title: "提示", msg: "请先勾选要添加的资源数据！"});
+                            Lobibox.alert('info', {title: "提示", msg: "请先勾选要添加的资源记录！"});
                         }
                         else{
                             var arr = $.extend(true,[],rows);

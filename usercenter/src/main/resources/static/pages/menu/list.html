@@ -72,6 +72,21 @@ $(function(){
                         });
                     }
                 }},
+            {text:"详情", iconCls:"glyphicon glyphicon-file",
+                handler:function(){
+                    var rows = $("#menu-table").treegridData("getSelections");
+                    if(rows.length==0){
+                        Lobibox.alert('info', {title: "提示", msg: "请先选中要查看的记录"});
+                    }
+                    else{
+                        utils.dialog({
+                            id: "menu-dialog",
+                            title: "详情",
+                            url: "/pages/menu/detail.html",
+                            data: {id: rows[0].id}
+                        });
+                    }
+                }},
             {text:"删除", iconCls:"glyphicon glyphicon-remove",
                 handler:function(){
                     var rows = $("#menu-table").treegridData("getSelections");
@@ -90,21 +105,6 @@ $(function(){
                                 }
                                 $('#menu-table').treegridData('reload');
                             }
-                        });
-                    }
-                }},
-            {text:"详情", iconCls:"glyphicon glyphicon-file",
-                handler:function(){
-                    var rows = $("#menu-table").treegridData("getSelections");
-                    if(rows.length==0){
-                        Lobibox.alert('info', {title: "提示", msg: "请先选中要查看的记录"});
-                    }
-                    else{
-                        utils.dialog({
-                            id: "menu-dialog",
-                            title: "详情",
-                            url: "/pages/menu/detail.html",
-                            data: {id: rows[0].id}
                         });
                     }
                 }}

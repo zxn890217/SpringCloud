@@ -24,4 +24,28 @@ public class UserService extends BaseService<User, QUser> {
     public User loadUser(String username, String password){
         return userDao.loadUser(username, password);
     }
+
+    @Override
+    public boolean insert(User entity) {
+        if(userDao.insert(entity)>0){
+            if(entity.getRoles()!=null && entity.getRoles().size()>0)
+                userDao.saveUserRole(entity);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean update(User entity) {
+        userDao.deleteUserRole(entity.getId());
+        if(entity.getRoles()!=null && entity.getRoles().size()>0)
+            userDao.saveUserRole(entity);
+        return super.update(entity);
+    }
+
+    @Override
+    public boolean delete(Long id) {
+        userDao.deleteUserRole(id);
+        return super.delete(id);
+    }
 }

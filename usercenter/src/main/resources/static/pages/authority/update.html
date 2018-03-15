@@ -1,9 +1,14 @@
 <!DOCTYPE html>
 <script>
     $(function(){
-        var data = BootstrapDialog.getDialog("authority-dialog").options.data;
-        $("#authority-form").bootstrapForm("loadData", data);
+        var dialogData = BootstrapDialog.getDialog("authority-dialog").options.data;
+        $("#authority-form").bootstrapForm("loadData", dialogData);
         $("#authority-form").bootstrapForm("validForm", {
+            ajaxOpts:{
+                url: "/authority/"+dialogData.id,
+                contentType:"application/json",
+                type: "PUT"
+            },
             dialogId: "authority-dialog",
             tableId: "authority-table",
             submitBtnId: "authority-editBtn",
@@ -19,38 +24,9 @@
                     }
                 }
             },
-            submitAjax: function(jq){
-                var data = jq.serializeJson();
-                var id = data.id;
-                data.resources = $("#authority-resource-table").bootstrapTable("getData");
-                data = JSON.stringify(data);
-                $.ajax({
-                    url: "/authority/"+id,
-                    contentType:"application/json",
-                    type: "PUT",
-                    dataType: "json",
-                    data: data,
-                    success:function(r){
-                        if(r){
-                            if(r.success){
-                                BootstrapDialog.getDialog("authority-dialog").close();
-                                $("#authority-table").bootstrapTable("refresh");
-                                Lobibox.notify('info', {size: 'mini',title: '提示',msg: r.msg});
-                            }
-                            else{
-                                Lobibox.alert('error', {title: '失败',msg: r.msg});
-                            }
-                        }
-                        else{
-                            Lobibox.alert('error', {title: '错误',msg: '无返回值'});
-                        }
-                        $("#authority-editBtn").removeAttr("disabled");
-                    },
-                    error:function(){
-                        Lobibox.notify('error', {width: $(window).width(),msg: '表单提交失败'});
-                        $("#authority-editBtn").removeAttr("disabled");
-                    }
-                });
+            extendParams: function(jq){
+                var resources = $("#authority-resource-table").bootstrapTable("getData");
+                return {"resources": resources};
             }
         });
         utils.bootstrapTable({
@@ -58,7 +34,7 @@
             singleSelect: false,
             showRefresh: false,
             showToggle: false,
-            data: data.resources,
+            data: dialogData.resources,
             uniqueId: 'id',
             columns: [
                 {field: 'check', checkbox: true},
@@ -102,7 +78,14 @@
                 closable: true,
                 data: {
                     callback: function(rows){
-                        $("#authority-resource-table").bootstrapTable('append', rows);
+                        var arr = [];
+                        $.each(rows, function(i,n){
+                            var row = $("#authority-resource-table").bootstrapTable('getRowByUniqueId', n.id);
+                            if(row==null){
+                                arr.push(n);
+                            }
+                        });
+                        $("#authority-resource-table").bootstrapTable('append', arr);
                     }}
             });
         });

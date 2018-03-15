@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<script>
+    $(function(){
+        utils.bootstrapTable({
+            id: "role-authorities-table",
+            url: "/authority/page",
+            pagination: true,
+            searchForm: 'role-authorities-searchForm',
+            columns: [
+                {field:'check', checkbox:true},
+                {field:'id', title:'权限ID', visible:false},
+                {field:'name', title:'名称'},
+                {field:'code', title:'代码'}
+            ],
+            buttons: [
+                {text:"添加", iconCls:"glyphicon glyphicon-plus",
+                    handler:function(){
+                        var rows = $("#role-authorities-table").bootstrapTable("getSelections");
+                        if(rows==null || rows.length==0){
+                            Lobibox.alert('info', {title: "提示", msg: "请先勾选要添加的权限记录！"});
+                        }
+                        else{
+                            var arr = $.extend(true,[],rows);
+                            var dialog = BootstrapDialog.getDialog("role-authority-dialog");
+                            dialog.options.data.callback(arr);
+                            dialog.close();
+                        }
+                    }}
+            ]});
+    });
+</script>
+<div class="panel panel-default">
+    <div class="panel-body">
+        <form id="role-authorities-searchForm" class="searchform">
+            <div><input class="form-control" type="text" name="name" placeholder="名称"/></div>
+            <div><input class="form-control" type="text" name="code" placeholder="代码"/></div>
+        </form>
+    </div>
+</div>
+<table id="role-authorities-table"></table>

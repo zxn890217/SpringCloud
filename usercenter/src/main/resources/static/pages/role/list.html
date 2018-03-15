@@ -9,22 +9,8 @@ utils.bootstrapTable({
     searchForm: 'role-searchForm',
     columns: [
         {field:'check', checkbox:true},
-        {field:'roleId', title:'角色ID', visible:false}, 
-        {field:'name', title:'角色名称'},
-        {field:'state', title:'状态', formatter:function(value){
-            if(value=='1')
-                return '可用';
-            return '禁用';
-        }},
-        {field:'menus', title:'拥有菜单', formatter:function(value){
-            if(value){
-                var str = '';
-                $.each(value, function(i, n){
-                    str += n.name +' ';
-                });
-                return str;
-            }
-        }}
+        {field:'id', title:'角色ID', visible:false},
+        {field:'name', title:'角色名称'}
     ],
     buttons: [
         {text:"添加", iconCls:"glyphicon glyphicon-plus",
@@ -48,21 +34,7 @@ utils.bootstrapTable({
                         title: "修改",
                         url: "/pages/role/update.html",
                         buttons: [{label: "修改", id: "role-editBtn"}],
-                        data: {roleId: rows[0].roleId}
-                    });
-                }
-            }},
-        {text:"删除", iconCls:"glyphicon glyphicon-remove",
-            handler:function(){
-                var rows = $("#role-table").bootstrapTable('getSelections');
-                if(rows.length==0){
-                    Lobibox.alert('info', {title: "提示", msg: "请先选中要删除的记录"});
-                }
-                else{
-                    utils.deleteAjax({
-                        url: "/role/delete",
-                        data: {roleId:rows[0].roleId},
-                        tableId: "role-table"
+                        data: rows[0]
                     });
                 }
             }},
@@ -77,7 +49,20 @@ utils.bootstrapTable({
                         id: "role-dialog",
                         title: "详情",
                         url: "/pages/role/detail.html",
-                        data: {roleId: rows[0].roleId}
+                        data: rows[0]
+                    });
+                }
+            }},
+        {text:"删除", iconCls:"glyphicon glyphicon-remove",
+            handler:function(){
+                var rows = $("#role-table").bootstrapTable('getSelections');
+                if(rows.length==0){
+                    Lobibox.alert('info', {title: "提示", msg: "请先选中要删除的记录"});
+                }
+                else{
+                    utils.deleteAjax({
+                        url: "/role/"+rows[0].id,
+                        tableId: "role-table"
                     });
                 }
             }}

@@ -79,20 +79,6 @@
                             });
                         }
                     }},
-                {text:"删除", iconCls:"glyphicon glyphicon-remove",
-                    handler:function(){
-                        var rows = $("#user-table").bootstrapTable('getSelections');
-                        if(rows.length==0){
-                            Lobibox.alert('info', {title: "提示", msg: "请先选中要删除的记录"});
-                        }
-                        else{
-                            utils.deleteAjax({
-                                url: "/user/delete",
-                                data: {userId:rows[0].userId},
-                                tableId: "user-table"
-                            });
-                        }
-                    }},
                 {text:"重置密码", iconCls:"glyphicon glyphicon-lock",
                     handler:function(){
                         var rows = $("#user-table").bootstrapTable('getSelections');
@@ -121,6 +107,20 @@
                                 title: "详情",
                                 url: "/pages/user/detail.html",
                                 data: rows[0]
+                            });
+                        }
+                    }},
+                {text:"删除", iconCls:"glyphicon glyphicon-remove",
+                    handler:function(){
+                        var rows = $("#user-table").bootstrapTable('getSelections');
+                        if(rows.length==0){
+                            Lobibox.alert('info', {title: "提示", msg: "请先选中要删除的记录"});
+                        }
+                        else{
+                            utils.deleteAjax({
+                                url: "/user/delete",
+                                data: {userId:rows[0].userId},
+                                tableId: "user-table"
                             });
                         }
                     }}

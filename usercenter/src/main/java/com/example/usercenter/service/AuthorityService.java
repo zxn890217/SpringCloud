@@ -39,11 +39,6 @@ public class AuthorityService extends BaseService<Authority, QAuthority> {
     }
 
     @Override
-    public boolean sensitiveUpdate(Authority entity) {
-        return super.sensitiveUpdate(entity);
-    }
-
-    @Override
     public boolean delete(Long id) {
         authorityDao.deleteAuthorityResource(id);
         return super.delete(id);

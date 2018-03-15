@@ -2,13 +2,14 @@
 <script>
     $(function(){
         utils.ajax({
-            url:"/role/query",
+            url:"/role",
             async: false,
+            type: "get",
             success:function(r){
                 if(r && r.length>0){
                     var select = $("#user-form select[name='roleIds']");
                     $.each(r, function(i, n){
-                        select.append('<option value="'+n.roleId+'">'+n.name+'</option>');
+                        select.append('<option value="'+n.id+'">'+n.name+'</option>');
                     });
                     select.select2();
                     select.on('select2:selecting', function (evt) {
@@ -55,30 +56,33 @@
         });
         var dialogData = BootstrapDialog.getDialog("user-dialog").options.data;
         $("#user-form").bootstrapForm("load", {
-            url: "/user/detail",
-            data: {userId: dialogData.userId},
-            success: function(data){
-                $("#user-form select[name='proviceId']").val(data.proviceId);
-                var p = addressUtil.getProvinceByCode(data.proviceId);
+            url: "/user/"+dialogData.id,
+            success: function(r){
+                $("#user-form").bootstrapForm("loadData", r.result);
+                $("#user-form select[name='proviceId']").val(r.result.proviceId);
+                var p = addressUtil.getProvinceByCode(r.result.proviceId);
                 var cities = addressUtil.getCities(p.i);
                 addressUtil.loadData($("#user-form select[name='cityId']"), cities);
-                $("#user-form select[name='cityId']").val(data.cityId);
-                var c = addressUtil.getCityByCode(data.cityId);
+                $("#user-form select[name='cityId']").val(r.result.cityId);
+                var c = addressUtil.getCityByCode(r.result.cityId);
                 var regions = addressUtil.getRegions(c.i);
                 addressUtil.loadData($("#user-form select[name='regionId']"), regions);
-                $("#user-form select[name='regionId']").val(data.regionId);
-                if(data.roles){
+                $("#user-form select[name='regionId']").val(r.result.regionId);
+                if(r.result.roles){
                     var selectedRoles = [];
-                    $.each(data.roles, function(i, n){
-                        selectedRoles.push(n.roleId);
+                    $.each(r.result.roles, function(i, n){
+                        selectedRoles.push(n.id);
                     });
-                    $("#user-form select[name='roleIds']").select2('val', selectedRoles);
+                    $("#user-form select[name='roleIds']").val(selectedRoles).trigger("change")
                 }
-
             }
         });
         $("#user-form").bootstrapForm("validForm", {
-            url: "/user/update",
+            ajaxOpts:{
+                url: "/user/"+dialogData.id,
+                contentType:"application/json",
+                type: "PUT"
+            },
             dialogId: "user-dialog",
             tableId: "user-table",
             submitBtnId: "user-editBtn",
@@ -164,18 +168,19 @@
                     }
                 }
             },
-            beforeSubmit: function(form){
-                form.find("input[name^='roles']").remove();
+            extendParams: function(jq){
+                var roles = [];
                 var vals = $("#user-form select[name='roleIds']").val();
                 $.each(vals, function(i, val){
-                    form.append('<input type="hidden" name="roles['+i+'].roleId" value="'+val+'"/>');
+                    roles.push({id: val});
                 });
+                return {"roles": roles};
             }
         });
     });
 </script>
 <form id="user-form" class="form-horizontal" method="PUT">
-    <input type="hidden" name="userId"/>
+    <input type="hidden" name="id"/>
     <input type="hidden" name="fullAddress"/>
     <div class="form-group">
         <label class="col-lg-3 control-label">姓名</label>
@@ -191,7 +196,7 @@
     </div>
     <div class="form-group">
         <label class="col-lg-3 control-label">性别</label>
-        <div class="col-lg-5">
+        <div class="col-lg-5 radio">
             <label><input type="radio" name="sex" value="男"/>男</label>&nbsp;
             <label><input type="radio" name="sex" value="女"/>女</label>
         </div>
@@ -246,9 +251,9 @@
     </div>
     <div class="form-group">
         <label class="col-lg-3 control-label">启/禁用</label>
-        <div class="col-lg-5">
-            <label><input type="radio" name="enabled" value="1"/>启用</label>
-            <label><input type="radio" name="enabled" value="2"/>禁用</label>
+        <div class="col-lg-5 radio">
+            <label><input type="radio" name="enabled" value="true"/>启用</label>
+            <label><input type="radio" name="enabled" value="false"/>禁用</label>
         </div>
     </div>
     <div class="form-group">

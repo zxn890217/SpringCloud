@@ -2,13 +2,14 @@
 <script>
     $(function(){
         utils.ajax({
-            url:"/role/query",
+            url:"/role",
             async: false,
+            type: "get",
             success:function(r){
                 if(r && r.length>0){
                     var select = $("#user-form select[name='roleIds']");
                     $.each(r, function(i, n){
-                        select.append('<option value="'+n.roleId+'">'+n.name+'</option>');
+                        select.append('<option value="'+n.id+'">'+n.name+'</option>');
                     });
                     select.select2();
                     select.on('select2:selecting', function (evt) {
@@ -54,7 +55,10 @@
             $("#user-form input[name='fullAddress']").val(address);
         });
         $("#user-form").bootstrapForm("validForm", {
-            url: "/user/add",
+            ajaxOpts:{
+                url: "/user",
+                contentType:"application/json"
+            },
             dialogId: "user-dialog",
             tableId: "user-table",
             submitBtnId: "user-saveBtn",
@@ -140,12 +144,13 @@
                     }
                 }
             },
-            beforeSubmit: function(form){
-                form.find("input[name^='roles']").remove();
+            extendParams: function(jq){
+                var roles = [];
                 var vals = $("#user-form select[name='roleIds']").val();
                 $.each(vals, function(i, val){
-                    form.append('<input type="hidden" name="roles['+i+'].roleId" value="'+val+'"/>');
+                    roles.push({id: val});
                 });
+                return {"roles": roles};
             }
         });
     });
@@ -172,7 +177,7 @@
     </div>
     <div class="form-group">
         <label class="col-lg-3 control-label">性别</label>
-        <div class="col-lg-5">
+        <div class="col-lg-5 radio">
             <label><input type="radio" name="sex" value="男" checked/>男</label>&nbsp;
             <label><input type="radio" name="sex" value="女"/>女</label>
         </div>
@@ -227,9 +232,9 @@
     </div>
     <div class="form-group">
         <label class="col-lg-3 control-label">启/禁用</label>
-        <div class="col-lg-5">
-            <label><input type="radio" name="enabled" value="1" checked/>启用</label>
-            <label><input type="radio" name="enabled" value="2"/>禁用</label>
+        <div class="col-lg-5 radio">
+            <label><input type="radio" name="enabled" value="true" checked/>启用</label>
+            <label><input type="radio" name="enabled" value="false"/>禁用</label>
         </div>
     </div>
     <div class="form-group">
