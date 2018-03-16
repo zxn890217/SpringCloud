@@ -22,4 +22,8 @@ public interface UserDao extends BaseDao<User, QUser> {
      * 根据用户ID删除用户角色关系
      * */
     public int deleteUserRole(long id);
+    /**
+     * 修改用户密码
+     * */
+    public int updatePassword(User entity);
 }

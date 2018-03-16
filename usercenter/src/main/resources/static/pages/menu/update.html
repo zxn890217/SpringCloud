@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <script>
     $(function(){
-        var data = BootstrapDialog.getDialog("menu-dialog").options.data;
-        $("#menu-form").bootstrapForm("load", {url: "/menu/"+data.id});
+        var dialogData = BootstrapDialog.getDialog("menu-dialog").options.data;
+        $("#menu-form").bootstrapForm("load", {url: "/menu/"+dialogData.id});
         $("#menu-form").bootstrapForm("validForm", {
             ajaxOpts:{
-                url: "/menu/"+data.id,
+                url: "/menu/"+dialogData.id,
                 type: "PUT",
                 contentType:"application/json"
             },
@@ -47,6 +47,47 @@
                     $('#menu-table').treegridData('reload');
                 }
             }
+        });
+
+        $("#menu-form input[name='parent.name']").on("dblclick", function(){
+            utils.dialog({
+                id: "menu-tree-dialog",
+                title: "修改",
+                url: "/pages/menu/menu-tree.html",
+                data: {
+                    callback: function(row){
+                        if(row.id == dialogData.id){
+                            Lobibox.alert('error', {title: "错误", msg: "不能选择自己作为父级节点"});
+                            return;
+                        }
+                        $("#menu-form input[name='parent.name']").val(row.name);
+                        $("#menu-form input[name='parent.id']").val(row.id);
+                    }}
+            });
+        });
+
+        $("#menu-parent-clear-btn").on("click", function(){
+            $("#menu-form input[name='parent.name']").val("");
+            $("#menu-form input[name='parent.id']").val("");
+        });
+
+        $("#menu-form input[name='authority.code']").on("dblclick", function(){
+            utils.dialog({
+                id: "menu-authority-dialog",
+                title: "修改",
+                url: "/pages/menu/menu-authority.html",
+                closable: true,
+                data: {
+                    callback: function(row){
+                        $("#menu-form input[name='authority.id']").val(row.id);
+                        $("#menu-form input[name='authority.code']").val(row.code);
+                    }}
+            });
+        });
+
+        $("#menu-authority-clear-btn").on("click", function(){
+            $("#menu-form input[name='authority.id']").val("");
+            $("#menu-form input[name='authority.code']").val("");
         });
     });
 </script>

@@ -62,5 +62,8 @@ liquibase:
 management:
   security:
     enabled: false
-
-logging.level.org.springframework.web: DEBUG
+#spring 日志输出控制
+logging:
+  level:
+    com.example.usercenter.dao: DEBUG
+    org.springframework.web: DEBUG

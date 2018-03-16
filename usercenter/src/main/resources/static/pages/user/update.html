@@ -57,20 +57,19 @@
         var dialogData = BootstrapDialog.getDialog("user-dialog").options.data;
         $("#user-form").bootstrapForm("load", {
             url: "/user/"+dialogData.id,
-            success: function(r){
-                $("#user-form").bootstrapForm("loadData", r.result);
-                $("#user-form select[name='proviceId']").val(r.result.proviceId);
-                var p = addressUtil.getProvinceByCode(r.result.proviceId);
+            onSuccess: function(r){
+                $("#user-form select[name='proviceId']").val(r.proviceId);
+                var p = addressUtil.getProvinceByCode(r.proviceId);
                 var cities = addressUtil.getCities(p.i);
                 addressUtil.loadData($("#user-form select[name='cityId']"), cities);
-                $("#user-form select[name='cityId']").val(r.result.cityId);
-                var c = addressUtil.getCityByCode(r.result.cityId);
+                $("#user-form select[name='cityId']").val(r.cityId);
+                var c = addressUtil.getCityByCode(r.cityId);
                 var regions = addressUtil.getRegions(c.i);
                 addressUtil.loadData($("#user-form select[name='regionId']"), regions);
-                $("#user-form select[name='regionId']").val(r.result.regionId);
-                if(r.result.roles){
+                $("#user-form select[name='regionId']").val(r.regionId);
+                if(r.roles){
                     var selectedRoles = [];
-                    $.each(r.result.roles, function(i, n){
+                    $.each(r.roles, function(i, n){
                         selectedRoles.push(n.id);
                     });
                     $("#user-form select[name='roleIds']").val(selectedRoles).trigger("change")

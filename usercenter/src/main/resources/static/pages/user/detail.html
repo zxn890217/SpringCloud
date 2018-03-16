@@ -2,14 +2,23 @@
 <script>
     $(function(){
         var dialogData = BootstrapDialog.getDialog("user-dialog").options.data;
-        $("#user-form").bootstrapForm("load", {url: "/user/detail", data: {userId: dialogData.userId}});
+        $("#user-form").bootstrapForm("load", {
+            url: "/user/"+dialogData.id,
+            onSuccess: function(r){
+                var roles = r.roles;
+                if(roles!=null && roles.length>0)
+                    $.each(roles, function(i, n){
+                        $("#user-roles-container").append(n.name+" ");
+                    })
+            }
+        });
     });
 </script>
 <form id="user-form" class="form-horizontal">
     <div class="form-group">
         <label class="col-lg-3 control-label">用户ID</label>
         <div class="col-lg-5">
-            <input type="text" class="form-control" name="userId" readonly/>
+            <input type="text" class="form-control" name="id" readonly/>
         </div>
     </div>
     <div class="form-group">
@@ -86,6 +95,12 @@
                 <option value="4">年假</option>
                 <option value="5">病假</option>
             </select>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-lg-3 control-label">角色</label>
+        <div class="col-lg-5">
+            <div id="user-roles-container"></div>
         </div>
     </div>
 </form>

@@ -18,8 +18,12 @@
                 dataType: "json",
                 success: function(r){
                     if(r.success!=undefined && r.result!=undefined){
-                        if(r.success && r.result)
+                        if(r.success && r.result){
+                            if(options.onSuccess){
+                                options.onSuccess(r.result);
+                            }
                             $.fn.bootstrapForm.fillForm.parseAndFill(jq, null, r.result);
+                        }
                         else
                             Lobibox.notify('error', {
                                 width: $(window).width(),
@@ -27,17 +31,12 @@
                             });
                     }
                     else{
+                        options.onSuccess(r);
                         $.fn.bootstrapForm.fillForm.parseAndFill(jq, null, r);
                     }
                 }
             }
             var opts = $.extend(configs, options||{});
-            if(options.success){
-                opts.success = function(data){
-                    if(options.success(data)!=false)
-                        $.fn.bootstrapForm.fillForm.parseAndFill(jq, null, data);
-                }
-            }
             return utils.ajax(opts);
         },
         validForm: function(jq, options){

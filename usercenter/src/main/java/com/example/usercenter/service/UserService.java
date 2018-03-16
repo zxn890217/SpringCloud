@@ -7,6 +7,7 @@ import com.example.domain.entity.user.User;
 import com.example.usercenter.dao.UserDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Created by zxn on 2017/10/23.
@@ -47,5 +48,11 @@ public class UserService extends BaseService<User, QUser> {
     public boolean delete(Long id) {
         userDao.deleteUserRole(id);
         return super.delete(id);
+    }
+
+    @Transactional
+    public boolean resetPassword(User entity){
+
+        return userDao.updatePassword(entity)>0;
     }
 }
