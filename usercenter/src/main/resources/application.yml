@@ -37,13 +37,13 @@ eureka:
   port: ${server.port}
   client:
     serviceUrl:
-      defaultZone: http://10.6.71.51:8761/eureka/
+      defaultZone: http://localhost:8761/eureka/
     healthcheck:
       enabled: true
     prefer-same-zone-eureka: false
   instance:
     prefer-ip-address: true
-    #instance-id: ${spring.application.name}:${spring.application.instance_id:${server.port}}
+    instance-id: ${spring.application.name}:${spring.application.instance_id:${server.port}}
 
 mybatis:
   mapper-locations: classpath:mybatis/mapper/*.xml
