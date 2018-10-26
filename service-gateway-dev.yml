@@ -11,9 +11,9 @@ spring:
           - Path=/api-a/{segment}
           filters:
           - SetPath=/{segment}
-        - id: api-b
-          uri: lb://SERVICE-FEIGN
-          predicates:
-          - Path=/api-b/**
-          filters:
-          - StripPrefix=1
+ #       - id: api-b
+ #         uri: lb://SERVICE-FEIGN
+ #         predicates:
+ #         - Path=/api-b/**
+ #         filters:
+ #         - StripPrefix=1
