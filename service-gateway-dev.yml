@@ -1,0 +1,19 @@
+spring:
+  cloud:
+      gateway:
+        discovery:
+          locator:
+            enabled: false
+        routes:
+        - id: api-a
+          uri: lb://service-ribbon
+          predicates:
+          - Path=/api-a/{segment}
+          filters:
+          - SetPath=/{segment}
+        - id: api-b
+          uri: lb://SERVICE-FEIGN
+          predicates:
+          - Path=/api-b/**
+          filters:
+          - StripPrefix=1
