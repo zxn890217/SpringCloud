@@ -19,5 +19,5 @@ spring:
           - StripPrefix=1
           - name: RequestRateLimiter
             args:
-              redis-rate-limiter.replenishRate: 1
-              redis-rate-limiter.burstCapacity: 2
+              redis-rate-limiter.replenishRate: 10
+              redis-rate-limiter.burstCapacity: 20
